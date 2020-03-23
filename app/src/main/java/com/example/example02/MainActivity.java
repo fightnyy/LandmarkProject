@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
 
         if(user == null){
             startLoginActivity();
-        } else{
+        } else {
             startProfileActivity();
         }
 

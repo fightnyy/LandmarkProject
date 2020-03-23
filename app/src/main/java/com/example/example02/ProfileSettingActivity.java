@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,6 +31,12 @@ public class ProfileSettingActivity extends AppCompatActivity {
         findViewById(R.id.done).setOnClickListener(onClickListener);
     }
 
+    @Override
+    public void onBackPressed(){
+        super.onBackPressed();
+        finish();
+    }
+
     View.OnClickListener onClickListener = new View.OnClickListener() {
         public void onClick(View v) {
             switch (v.getId()) {
@@ -42,48 +49,31 @@ public class ProfileSettingActivity extends AppCompatActivity {
 
     private void profileUpdate() {
         String name = ((EditText) findViewById(R.id.nameEditText)).getText().toString();
-        String address = ((EditText) findViewById(R.id.adressEditText)).getText().toString();
+        String address = ((EditText) findViewById(R.id.addressEditText)).getText().toString();
 
-        if (name.length() > 0) {
+        if (name.length() > 0 && address.length() > 0) {
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             FirebaseFirestore db = FirebaseFirestore.getInstance();
-
             ProfileInfo profileinfo = new ProfileInfo(name, address);
-            db.collection("users").document(user.getUid()).set(profileinfo);
 
-            if(user != null){
-                db.collection("data").document("one")
-                        .set(docData)
+            if(user != null) {
+                db.collection("users").document(user.getUid()).set(profileinfo)
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
+                                startToast("회원정보 등록에 성공하였습니다.");
+                                finish();
                             }
                         })
                         .addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
+                                startToast("회원정보 등록에 실패하였습니다.");
                             }
                         });
             }
-
-            /*UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                    .setDisplayName(name)
-                    .build();
-
-            if(user != null){
-                user.updateProfile(profileUpdates)
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    startToast("회원정보 등록에 성공하였습니다.");
-                                    finish();
-                                }
-                            }
-                        });
-            }*/
         } else {
-            startToast("회원정보를 입력해주세요.");
+            startToast("이름을 입력해주세요.");
         }
     }
 

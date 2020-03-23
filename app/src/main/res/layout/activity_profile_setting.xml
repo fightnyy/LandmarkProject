@@ -47,14 +47,13 @@
             android:textSize="32sp" />
 
         <EditText
-            android:id="@+id/adressEditText"
+            android:id="@+id/addressEditText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/nameEditText"
             android:layout_centerHorizontal="true"
             android:layout_margin="0sp"
-            android:text="Korea, seoul"
-            android:textAllCaps="true"
+            android:hint="Korea, seoul"
             android:textColor="@color/address"
             android:textColorHint="@color/white"
             android:textSize="14dp" />

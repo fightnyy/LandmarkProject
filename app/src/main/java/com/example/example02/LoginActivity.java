@@ -46,10 +46,10 @@ public class LoginActivity extends AppCompatActivity {
                     login();
                     break;
                 case R.id.registerButton:
-                    startRegisterActivity();
+                    myStartActivity(RegisterActivity.class);
                     break;
                 case R.id.resetButton:
-                    startResetActivity();
+                    myStartActivity(PasswordResetActivity.class);
                     break;
             }
         }
@@ -69,7 +69,7 @@ public class LoginActivity extends AppCompatActivity {
                                 // Sign in success, update UI with the signed-in user's information
                                 FirebaseUser user = mAuth.getCurrentUser();
                                 startToast("로그인에 성공하였습니다.");
-                                finish();
+                                myStartActivity(MainActivity.class);
                             } else {
                                 if (task.getException() != null)
                                     startToast(task.getException().toString());
@@ -86,13 +86,8 @@ public class LoginActivity extends AppCompatActivity {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
-    private void startRegisterActivity(){
-        Intent intent = new Intent ( this, RegisterActivity.class);
-        startActivity(intent);
-    }
-
-    private void startResetActivity(){
-        Intent intent = new Intent ( this, PasswordResetActivity.class);
+    private void myStartActivity(Class c){
+        Intent intent = new Intent(this, c);
         startActivity(intent);
     }
 }
