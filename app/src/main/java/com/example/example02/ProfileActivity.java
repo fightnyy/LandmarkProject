@@ -5,18 +5,22 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import org.w3c.dom.Text;
 
 public class ProfileActivity extends AppCompatActivity {
     private static final String TAG = "ProfileActivity";
@@ -26,7 +30,7 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         DocumentReference docRef = db.collection("users").document(user.getUid());
@@ -37,9 +41,15 @@ public class ProfileActivity extends AppCompatActivity {
                     DocumentSnapshot document = task.getResult();
                      if(document != null) {
                         if (document.exists()) {
-                            Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                            TextView tv_name = (TextView)findViewById(R.id.tv_name);
+                            TextView tv_address = (TextView)findViewById(R.id.tv_address);
+                            TextView tv_email = (TextView)findViewById(R.id.tv_email);
+                            tv_name.setText(document.getData().get("name").toString());
+                            tv_address.setText(document.getData().get("address").toString());
+                            tv_email.setText(user.getEmail());
                         } else {
                             Log.d(TAG, "No such document");
+                            profileSetting();
                         }
                     }
                 } else {
@@ -49,6 +59,7 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
         findViewById(R.id.setting).setOnClickListener(onClickListener);
+        findViewById(R.id.Profileimage).setOnClickListener(onClickListener);
     }
 
     View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -56,6 +67,8 @@ public class ProfileActivity extends AppCompatActivity {
             switch (v.getId()) {
                 case R.id.setting:
                     profileSetting();
+                    break;
+                case R.id.Profileimage:
                     break;
             }
         }

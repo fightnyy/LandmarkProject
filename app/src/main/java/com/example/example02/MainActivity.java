@@ -22,11 +22,11 @@ public class MainActivity extends AppCompatActivity {
 
         if(user == null){
             startLoginActivity();
-        } else {
-            startProfileActivity();
         }
 
         findViewById(R.id.logoutButton).setOnClickListener(onClickListener);
+        findViewById(R.id.CameraButton).setOnClickListener(onClickListener);
+        findViewById(R.id.ProfileButton).setOnClickListener(onClickListener);
     }
 
     View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -36,12 +36,25 @@ public class MainActivity extends AppCompatActivity {
                     FirebaseAuth.getInstance().signOut();
                     startLoginActivity();
                     break;
+
+                case R.id.CameraButton:
+                    startCameraActivity();
+                    break;
+
+                case R.id.ProfileButton:
+                    startProfileActivity();
+                    break;
             }
         }
     };
 
     private void startLoginActivity() {
         Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+    }
+
+    private void startCameraActivity(){
+        Intent intent = new Intent(this, CameraActivity.class);
         startActivity(intent);
     }
 

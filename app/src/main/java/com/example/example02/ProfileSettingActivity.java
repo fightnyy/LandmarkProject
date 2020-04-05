@@ -3,6 +3,7 @@ package com.example.example02;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -29,6 +30,7 @@ public class ProfileSettingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile_setting);
 
         findViewById(R.id.done).setOnClickListener(onClickListener);
+        findViewById(R.id.ProfileImageSetting).setOnClickListener(onClickListener);
     }
 
     @Override
@@ -37,11 +39,27 @@ public class ProfileSettingActivity extends AppCompatActivity {
         finish();
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+        super .onActivityResult(requestCode, resultCode, data);
+        switch (requestCode){
+            case 0 :{
+                if(resultCode == Activity.RESULT_OK){
+                    String resultValue = data.getStringExtra("someKey");
+                }
+                break;
+            }
+        }
+    }
+
     View.OnClickListener onClickListener = new View.OnClickListener() {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.done:
                     profileUpdate();
+                    break;
+                case R.id.ProfileImageSetting:
+                    startSettingProfileImage();
                     break;
             }
         }
@@ -78,4 +96,9 @@ public class ProfileSettingActivity extends AppCompatActivity {
     }
 
     private void startToast(String msg){ Toast.makeText(this, msg, Toast.LENGTH_SHORT).show(); }
+
+    private void startSettingProfileImage() {
+        Intent intent = new Intent(this, CameraActivity.class);
+        startActivityForResult(intent, 0);
+    }
 }

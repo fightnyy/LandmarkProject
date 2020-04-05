@@ -16,17 +16,42 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+
         <Button
-        android:layout_width="280dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="20dp"
-        android:background="@color/colorPrimaryDark"
-        android:text="Logout"
-        android:textColor="#FFFFFF"
-        android:textSize="20dp"
-        android:textStyle="bold"
-        android:id="@+id/logoutButton"/>
+            android:id="@+id/logoutButton"
+            android:layout_width="280dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:background="@color/colorPrimaryDark"
+            android:text="Logout"
+            android:textColor="#FFFFFF"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/CameraButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="center"
+            android:layout_marginTop="15dp"
+            android:adjustViewBounds="true"
+            android:clickable="true"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_photo_camera_black_24dp" />
+
+        <TextView
+            android:id="@+id/ProfileButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="center"
+            android:layout_marginTop="15dp"
+            android:adjustViewBounds="true"
+            android:text="Profile"
+            android:clickable="true"
+            android:scaleType="centerInside"/>
 
 
     </LinearLayout>

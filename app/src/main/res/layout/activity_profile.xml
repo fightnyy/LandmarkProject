@@ -21,6 +21,7 @@
             android:background="@drawable/circle_border">
 
             <ImageView
+                android:id="@+id/Profileimage"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
                 android:layout_margin="9dp"
@@ -39,19 +40,17 @@
             android:layout_below="@+id/imgUser"
             android:layout_centerHorizontal="true"
             android:layout_margin="15sp"
-            android:text="Person"
             android:textColorHint="@color/white"
             android:textColor="@color/white"
             android:textSize="32sp" />
 
         <TextView
-            android:id="@+id/tv_adress"
+            android:id="@+id/tv_address"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_name"
             android:layout_centerHorizontal="true"
             android:layout_margin="10sp"
-            android:text="Korea, seoul"
             android:textAllCaps="true"
             android:textColor="@color/address"
             android:textColorHint="@color/white"
@@ -176,12 +175,12 @@
                     android:text="Email"/>
 
                 <TextView
+                    android:id="@+id/tv_email"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="#000000"
                     android:textColorHint="#000000"
-                    android:textSize="18sp"
-                    android:text="test@test.com"/>
+                    android:textSize="18sp"/>
 
                 <View
                     android:layout_width="match_parent"
