@@ -5,12 +5,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -41,11 +43,13 @@ public class ProfileActivity extends AppCompatActivity {
                     DocumentSnapshot document = task.getResult();
                      if(document != null) {
                         if (document.exists()) {
+                            ImageView ProfileImage = (ImageView)findViewById(R.id.Profileimage);
                             TextView tv_name = (TextView)findViewById(R.id.tv_name);
                             TextView tv_address = (TextView)findViewById(R.id.tv_address);
                             TextView tv_email = (TextView)findViewById(R.id.tv_email);
                             tv_name.setText(document.getData().get("name").toString());
                             tv_address.setText(document.getData().get("address").toString());
+                            setProflieImage(document, ProfileImage);
                             tv_email.setText(user.getEmail());
                         } else {
                             Log.d(TAG, "No such document");
@@ -74,6 +78,10 @@ public class ProfileActivity extends AppCompatActivity {
         }
     };
 
+    private void setProflieImage(DocumentSnapshot document, ImageView ProfileImage){
+        GlideApp.with(this).asBitmap().load(document.getData().get("photoUrl").toString()).apply(new RequestOptions().circleCrop()).into(ProfileImage);
+
+    }
     private void profileSetting() {
         Intent intent = new Intent(this, ProfileSettingActivity.class);
         startActivity(intent);
