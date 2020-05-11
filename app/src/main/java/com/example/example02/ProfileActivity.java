@@ -1,6 +1,7 @@
 package com.example.example02;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -24,7 +25,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.w3c.dom.Text;
 
-public class ProfileActivity extends AppCompatActivity {
+public class ProfileActivity extends BasisActivity {
     private static final String TAG = "ProfileActivity";
 
     @Override

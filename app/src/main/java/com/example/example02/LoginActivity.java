@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -23,7 +24,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Currency;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends BasisActivity {
     private FirebaseAuth mAuth;
 
     @Override

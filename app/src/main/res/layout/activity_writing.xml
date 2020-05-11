@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".WritingActivity">
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -17,14 +17,35 @@
         app:layout_constraintTop_toTopOf="parent">
 
 
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="220dp"
+            android:layout_height="220dp"
+            android:layout_gravity="center"
+            android:layout_margin="35dp"
+            app:srcCompat="@android:drawable/ic_menu_camera" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="350dp"
+            android:layout_height="171dp"
+            android:layout_gravity="center"
+            android:text=" 입력하세요."
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.495"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.088" />
+
         <Button
-            android:id="@+id/logoutButton"
+            android:id="@+id/selectionarea"
             android:layout_width="280dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
             android:background="@color/colorPrimaryDark"
-            android:text="Logout"
+            android:text="지역선택"
             android:textColor="#FFFFFF"
             android:textSize="20dp"
             android:textStyle="bold" />
@@ -41,32 +62,6 @@
             android:textSize="20dp"
             android:textStyle="bold" />
 
-        <ImageView
-            android:id="@+id/CameraButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_gravity="center"
-            android:layout_marginTop="15dp"
-            android:adjustViewBounds="true"
-            android:clickable="true"
-            android:scaleType="centerInside"
-            android:src="@drawable/ic_photo_camera_black_24dp" />
-
-        <TextView
-            android:id="@+id/ProfileButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_gravity="center"
-            android:layout_marginTop="15dp"
-            android:adjustViewBounds="true"
-            android:text="Profile"
-            android:clickable="true"
-            android:scaleType="centerInside"/>
-
-
 
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,6 +3,7 @@ package com.example.example02;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -14,7 +15,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class PasswordResetActivity extends AppCompatActivity {
+public class PasswordResetActivity extends BasisActivity {
     private FirebaseAuth mAuth;
 
     @Override

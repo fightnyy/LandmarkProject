@@ -3,6 +3,7 @@ package com.example.example02;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -11,7 +12,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BasisActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,18 +21,19 @@ public class MainActivity extends AppCompatActivity {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-        if(user == null){
+        if (user == null) {
             startLoginActivity();
         }
 
         findViewById(R.id.logoutButton).setOnClickListener(onClickListener);
+        findViewById(R.id.writingButton).setOnClickListener(onClickListener);
         findViewById(R.id.CameraButton).setOnClickListener(onClickListener);
         findViewById(R.id.ProfileButton).setOnClickListener(onClickListener);
     }
 
     View.OnClickListener onClickListener = new View.OnClickListener() {
         public void onClick(View v) {
-            switch (v.getId()){
+            switch (v.getId()) {
                 case R.id.logoutButton:
                     FirebaseAuth.getInstance().signOut();
                     startLoginActivity();
@@ -44,6 +46,10 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.ProfileButton:
                     startProfileActivity();
                     break;
+                case R.id.writingButton:
+                    startWritingActivity();
+                    break;
+
             }
         }
     };
@@ -53,13 +59,18 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void startCameraActivity(){
+    private void startCameraActivity() {
         Intent intent = new Intent(this, CameraActivity.class);
         startActivity(intent);
     }
 
     private void startProfileActivity() {
         Intent intent = new Intent(this, ProfileActivity.class);
+        startActivity(intent);
+    }
+
+    private void startWritingActivity() {
+        Intent intent = new Intent(this, WritingActivity.class);
         startActivity(intent);
     }
 }
