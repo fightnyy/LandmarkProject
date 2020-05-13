@@ -1,5 +1,7 @@
 package com.example.example02.Activity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -26,6 +28,7 @@ public class MainActivity extends BasisActivity {
         findViewById(R.id.CameraButton).setOnClickListener(onClickListener);
         findViewById(R.id.ProfileButton).setOnClickListener(onClickListener);
     }
+
 
     View.OnClickListener onClickListener = new View.OnClickListener() {
         public void onClick(View v) {
@@ -69,6 +72,37 @@ public class MainActivity extends BasisActivity {
         Intent intent = new Intent(this, WritingActivity.class);
         startActivity(intent);
     }
+
+    @Override
+    public void onBackPressed() {
+
+        if(isTaskRoot()){
+            AlertDialog.Builder builder=new AlertDialog.Builder(this);
+            builder.setTitle("나가기");
+            builder.setMessage("앱을 종료하시겠습니까?");
+            builder.setIcon(R.drawable.air_plane);
+            builder.setPositiveButton("예", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            });
+            builder.setNegativeButton("아니오", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+            AlertDialog dialog=builder.create();
+            dialog.show();
+
+
+        }else{
+            super.onBackPressed();
+        }
+
+    }
+
 }
 
 
