@@ -20,14 +20,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar"
         android:usesCleartextTraffic="true">
-        <activity android:name=".WritingActivity"/>
-        <activity android:name=".CameraActivity" />
-        <activity android:name=".ProfileSettingActivity" />
-        <activity android:name=".ProfileActivity" />
-        <activity android:name=".LoginActivity" />
-        <activity android:name=".PasswordResetActivity" />
-        <activity android:name=".RegisterActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".Activity.WritingActivity"/>
+        <activity android:name=".Activity.CameraActivity" />
+        <activity android:name=".Activity.ProfileSettingActivity" />
+        <activity android:name=".Activity.ProfileActivity" />
+        <activity android:name=".Activity.LoginActivity" />
+        <activity android:name=".Activity.PasswordResetActivity" />
+        <activity android:name=".Activity.RegisterActivity" />
+        <activity android:name=".Activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

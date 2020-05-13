@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package com.example.example02;
+package com.example.example02.Activity;
 
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 
-import androidx.appcompat.app.AppCompatActivity;
+import com.example.example02.Activity.BasisActivity;
+import com.example.example02.Camera2BasicFragment;
+import com.example.example02.R;
 
 public class CameraActivity extends BasisActivity {
 

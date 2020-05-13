@@ -1,4 +1,4 @@
-package com.example.example02;
+package com.example.example02.Activity;
 
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;

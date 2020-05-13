@@ -1,12 +1,9 @@
-package com.example.example02;
-
-import androidx.appcompat.app.AppCompatActivity;
+package com.example.example02.Activity;
 
 import android.Manifest;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -14,57 +11,72 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 import com.bumptech.glide.request.RequestOptions;
+import com.example.example02.Activity.BasisActivity;
+import com.example.example02.ProfileInfo;
+import com.example.example02.R;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.List;
 
-public class WritingActivity extends BasisActivity {
+public class ProfileSettingActivity extends BasisActivity {
+    private static final String TAG = "ProfileSettingActivity";
     private Boolean isPermission = true;
 
-    private ImageView Image;
+    final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+    private ImageView ProfileImage;
     private String imagePath;
     private static final int GALLERY_CODE = 10;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_writing);
+        setContentView(R.layout.activity_profile_setting);
 
         tedPermission();
-        startSettingImage();
 
-        Image = (ImageView)findViewById(R.id.imageView);
-        findViewById(R.id.selectionarea).setOnClickListener(onClickListener);
-        findViewById(R.id.writingButton).setOnClickListener(onClickListener);
+        ProfileImage = (ImageView)findViewById(R.id.ProfileImageSetting);
+        findViewById(R.id.done).setOnClickListener(onClickListener);
+        findViewById(R.id.ProfileImageSetting).setOnClickListener(onClickListener);
     }
 
-    View.OnClickListener onClickListener = new View.OnClickListener() {
-        public void onClick(View v) {
-            switch (v.getId()) {
-                case R.id.selectionarea:
-
-                case R.id.writingButton:
-                    postUpdata();
-            }
-        }
-    };
-
-    private void postUpdata(){
-
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == GALLERY_CODE) {
             imagePath = getPath(this, data.getData());
             System.out.println(data.getData());
-            GlideApp.with(this).asBitmap().load(imagePath).into(Image);
+            GlideApp.with(this).asBitmap().load(imagePath).apply(new RequestOptions().circleCrop()).into(ProfileImage);
         }
     }
 
@@ -171,6 +183,86 @@ public class WritingActivity extends BasisActivity {
 
     }
 
+    View.OnClickListener onClickListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.done:
+                    profileUpdate();
+                    break;
+                case R.id.ProfileImageSetting:
+                    startSettingProfileImage();
+            }
+        }
+    };
+
+    private void profileUpdate() {
+        final String name = ((EditText) findViewById(R.id.nameEditText)).getText().toString();
+        final String address = ((EditText) findViewById(R.id.addressEditText)).getText().toString();
+
+        if (name.length() > 0 && address.length() > 0) {
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference storageRef = storage.getReference();
+            final StorageReference mountainImagesRef = storageRef.child("users/" + user.getUid() + "/profileImage.jpg");
+
+            if (imagePath == null) {
+                ProfileInfo profileinfo = new ProfileInfo(name, address, null);
+                storeUploader(profileinfo);
+            } else {
+                try {
+                    InputStream stream = new FileInputStream(new File(imagePath));
+                    UploadTask uploadTask = mountainImagesRef.putStream(stream);
+                    uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                        @Override
+                        public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                            if (!task.isSuccessful()) {
+                                throw task.getException();
+                            }
+                            return mountainImagesRef.getDownloadUrl();
+                        }
+                    }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Uri> task) {
+                            if (task.isSuccessful()) {
+                                Uri downloadUri = task.getResult();
+
+                                ProfileInfo profileinfo = new ProfileInfo(name, address, downloadUri.toString());
+                                storeUploader(profileinfo);
+                            } else {
+                                startToast( "회원정보를 보내는데 실패하였습니다.");
+                            }
+                        }
+                    });
+                } catch (FileNotFoundException e) {
+                    Log.e("로그", "에러 : " + e.toString());
+                }
+            }
+        } else {
+            startToast("회원정보를 입력해주세요.");
+        }
+    }
+
+    private void storeUploader(ProfileInfo profileinfo) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("users").document(user.getUid()).set(profileinfo)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        startToast("회원정보 등록을 성공하였습니다.");
+                        finish();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        startToast("회원정보 등록에 실패하였습니다.");
+                        Log.w(TAG, "Error writing document", e);
+                    }
+                });
+    }
+
+    private void startToast(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    }
 
     private void goToAlbum() {
         Intent intent = new Intent();
@@ -180,13 +272,9 @@ public class WritingActivity extends BasisActivity {
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), GALLERY_CODE);
     }
 
-    private void startSettingImage() {
+    private void startSettingProfileImage() {
         if (isPermission) goToAlbum();
         else startToast("권한 사용에 동의하여 주세요.");
-    }
-
-    private void startToast(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -213,3 +301,4 @@ public class WritingActivity extends BasisActivity {
         return "com.android.providers.media.documents".equals(uri.getAuthority());
     }
 }
+

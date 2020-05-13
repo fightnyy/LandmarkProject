@@ -1,16 +1,12 @@
-package com.example.example02;
-
-import androidx.appcompat.app.AppCompatActivity;
+package com.example.example02.Activity;
 
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 
+import com.example.example02.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserInfo;
 
 public class MainActivity extends BasisActivity {
 
