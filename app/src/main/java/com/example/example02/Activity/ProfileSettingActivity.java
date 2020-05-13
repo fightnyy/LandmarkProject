@@ -21,6 +21,7 @@ import androidx.annotation.NonNull;
 
 import com.bumptech.glide.request.RequestOptions;
 import com.example.example02.Activity.BasisActivity;
+import com.example.example02.GlideApp;
 import com.example.example02.ProfileInfo;
 import com.example.example02.R;
 import com.google.android.gms.tasks.Continuation;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.example02;
+package com.example.example02.Fragment;
 
 import android.Manifest;
 import android.app.Activity;
@@ -58,6 +58,9 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+import com.example.example02.AutoFitTextureView;
+import com.example.example02.R;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -164,7 +167,7 @@ public class Camera2BasicFragment extends Fragment
     /**
      * An {@link AutoFitTextureView} for camera preview.
      */
-    private AutoFitTextureView mTextureView;
+    private com.example.example02.AutoFitTextureView mTextureView;
 
     /**
      * A {@link CameraCaptureSession } for camera preview.
@@ -443,7 +446,7 @@ public class Camera2BasicFragment extends Fragment
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         view.findViewById(R.id.picture).setOnClickListener(this);
         view.findViewById(R.id.changeScreen).setOnClickListener(this);
-        mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
+        mTextureView = (com.example.example02.AutoFitTextureView) view.findViewById(R.id.texture);
     }
 
     @Override

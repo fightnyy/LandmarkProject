@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.example02.Activity.BasisActivity;
 import com.example.example02.Activity.ProfileSettingActivity;
+import com.example.example02.GlideApp;
 import com.example.example02.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;

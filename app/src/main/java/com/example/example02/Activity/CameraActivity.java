@@ -18,8 +18,7 @@ package com.example.example02.Activity;
 
 import android.os.Bundle;
 
-import com.example.example02.Activity.BasisActivity;
-import com.example.example02.Camera2BasicFragment;
+import com.example.example02.Fragment.Camera2BasicFragment;
 import com.example.example02.R;
 
 public class CameraActivity extends BasisActivity {

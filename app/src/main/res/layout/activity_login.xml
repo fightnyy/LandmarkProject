@@ -63,6 +63,7 @@
                 android:drawableStart="@drawable/ic_lock_outline_black_24dp"
                 android:drawableLeft="@drawable/ic_lock_outline_black_24dp"
                 android:hint="PASSWORD"
+                android:selectAllOnFocus="true"
                 android:inputType="textPassword"
                 android:padding="10dp"
                 android:textColor="@color/address"
