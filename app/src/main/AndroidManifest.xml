@@ -4,7 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.GET_TASKS"/>
+    <uses-permission android:name="android.permission.GET_TASKS" />
 
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
@@ -21,20 +21,25 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Activity.WritingActivity"/>
+        <activity android:name=".Activity.MapActivity"></activity>
+        <activity android:name=".Activity.WritingActivity" />
         <activity android:name=".Activity.CameraActivity" />
         <activity android:name=".Activity.ProfileSettingActivity" />
         <activity android:name=".Activity.ProfileActivity" />
         <activity android:name=".Activity.LoginActivity" />
         <activity android:name=".Activity.PasswordResetActivity" />
         <activity android:name=".Activity.RegisterActivity" />
-        <activity android:name=".Activity.MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+        <activity android:name=".Activity.MainActivity" >
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
         </activity>
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAAh250lv0smyX7XLWp9hu_9po-Luf7LXI" />
     </application>
 
 </manifest>

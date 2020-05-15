@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.example02;
+package com.example.example02.View;
 
 import android.content.Context;
 import android.util.AttributeSet;

@@ -59,7 +59,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.example.example02.AutoFitTextureView;
+import com.example.example02.View.AutoFitTextureView;
 import com.example.example02.R;
 
 import java.io.File;
@@ -167,7 +167,7 @@ public class Camera2BasicFragment extends Fragment
     /**
      * An {@link AutoFitTextureView} for camera preview.
      */
-    private com.example.example02.AutoFitTextureView mTextureView;
+    private com.example.example02.View.AutoFitTextureView mTextureView;
 
     /**
      * A {@link CameraCaptureSession } for camera preview.
@@ -446,7 +446,7 @@ public class Camera2BasicFragment extends Fragment
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         view.findViewById(R.id.picture).setOnClickListener(this);
         view.findViewById(R.id.changeScreen).setOnClickListener(this);
-        mTextureView = (com.example.example02.AutoFitTextureView) view.findViewById(R.id.texture);
+        mTextureView = (com.example.example02.View.AutoFitTextureView)view.findViewById(R.id.texture);
     }
 
     @Override
