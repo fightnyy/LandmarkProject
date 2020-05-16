@@ -23,7 +23,7 @@ public class MainActivity extends BasisActivity {
             startLoginActivity();
         }
 
-        findViewById(R.id.LocationButtion).setOnClickListener(onClickListener);
+        findViewById(R.id.LocationButton).setOnClickListener(onClickListener);
         findViewById(R.id.logoutButton).setOnClickListener(onClickListener);
         findViewById(R.id.writingButton).setOnClickListener(onClickListener);
         findViewById(R.id.CameraButton).setOnClickListener(onClickListener);
@@ -49,7 +49,7 @@ public class MainActivity extends BasisActivity {
                 case R.id.writingButton:
                     startWritingActivity();
                     break;
-                case R.id.LocationButtion:
+                case R.id.LocationButton:
                     startLocationActivity();
                     break;
             }
