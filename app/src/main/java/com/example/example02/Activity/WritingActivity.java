@@ -38,17 +38,17 @@ public class WritingActivity extends BasisActivity {
         tedPermission();
         startSettingImage();
 
-        Image = (ImageView)findViewById(R.id.imageView);
-        findViewById(R.id.selectionarea).setOnClickListener(onClickListener);
-        findViewById(R.id.writingButton).setOnClickListener(onClickListener);
+        Image = (ImageView)findViewById(R.id.imageShare);
+        findViewById(R.id.Location_selection).setOnClickListener(onClickListener);
+        findViewById(R.id.Post_update).setOnClickListener(onClickListener);
     }
 
     View.OnClickListener onClickListener = new View.OnClickListener() {
         public void onClick(View v) {
             switch (v.getId()) {
-                case R.id.selectionarea:
+                case R.id.Location_selection:
 
-                case R.id.writingButton:
+                case R.id.Post_update:
                     postUpdata();
             }
         }

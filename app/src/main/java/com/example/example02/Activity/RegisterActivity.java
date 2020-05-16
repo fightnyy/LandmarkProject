@@ -42,7 +42,7 @@ public class RegisterActivity extends BasisActivity {
     private void signUp() {
         String email = ((EditText)findViewById(R.id.emailText)).getText().toString();
         String password = ((EditText)findViewById(R.id.passwordText)).getText().toString();
-        String passwordCheck = ((EditText)findViewById(R.id.passwordCheck)).getText().toString();
+        String passwordCheck = ((EditText)findViewById(R.id.passwordTextCheck)).getText().toString();
 
         if(email.length() > 0 && password.length() > 0 && passwordCheck.length() > 0) {
 
