@@ -19,9 +19,13 @@
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme.NoActionBar"
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Activity.MapActivity"></activity>
+        <meta-data
+            android:name="com.google.android.actions"
+            android:resource="@xml/actions" />
+
+        <activity android:name=".Activity.MapActivity" />
         <activity android:name=".Activity.WritingActivity" />
         <activity android:name=".Activity.CameraActivity" />
         <activity android:name=".Activity.ProfileSettingActivity" />
@@ -29,12 +33,12 @@
         <activity android:name=".Activity.LoginActivity" />
         <activity android:name=".Activity.PasswordResetActivity" />
         <activity android:name=".Activity.RegisterActivity" />
-        <activity android:name=".Activity.MainActivity" >
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
+        <activity android:name=".Activity.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <meta-data

@@ -11,24 +11,50 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
+import android.widget.Toolbar;
+
+import androidx.annotation.NonNull;
 
 import com.example.example02.Activity.BasisActivity;
 import com.example.example02.GlideApp;
+import com.example.example02.PostInfo;
+import com.example.example02.ProfileInfo;
 import com.example.example02.R;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.List;
 
 public class WritingActivity extends BasisActivity {
     private Boolean isPermission = true;
+    private static final int GALLERY_CODE = 10;
 
     private ImageView Image;
     private String imagePath;
-    private static final int GALLERY_CODE = 10;
+
+    final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +64,8 @@ public class WritingActivity extends BasisActivity {
         tedPermission();
         startSettingImage();
 
-        Image = (ImageView)findViewById(R.id.imageShare);
+        Image = (ImageView) findViewById(R.id.imageShare);
+        findViewById(R.id.resetButton).setOnClickListener(onClickListener);
         findViewById(R.id.Location_selection).setOnClickListener(onClickListener);
         findViewById(R.id.Post_update).setOnClickListener(onClickListener);
     }
@@ -46,16 +73,75 @@ public class WritingActivity extends BasisActivity {
     View.OnClickListener onClickListener = new View.OnClickListener() {
         public void onClick(View v) {
             switch (v.getId()) {
+                case R.id.resetButton:
+                    startSettingImage();
+                    break;
                 case R.id.Location_selection:
-
+                    break;
                 case R.id.Post_update:
                     postUpdata();
+                    break;
             }
         }
     };
 
-    private void postUpdata(){
+    private void postUpdata() {
+        final String writingText = ((EditText) findViewById(R.id.caption)).getText().toString();
 
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReference();
+        final StorageReference mountainImagesRef = storageRef.child("posts/" + "" + user.getUid() + "/postImage.jpg");
+
+        if (imagePath == null) {
+            startSettingImage();
+        } else {
+            try {
+                InputStream stream = new FileInputStream(new File(imagePath));
+                UploadTask uploadTask = mountainImagesRef.putStream(stream);
+                uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                    @Override
+                    public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                        if (!task.isSuccessful()) {
+                            throw task.getException();
+                        }
+                        return mountainImagesRef.getDownloadUrl();
+                    }
+                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Uri> task) {
+                        if (task.isSuccessful()) {
+                            Uri downloadUri = task.getResult();
+
+                            PostInfo postInfo = new PostInfo(writingText, downloadUri.toString());
+                            storeUploader(postInfo);
+                        } else {
+                            startToast("게시글을 올리는대 실패하였습니다.");
+                        }
+                    }
+                });
+            } catch (FileNotFoundException e) {
+                Log.e("로그", "에러 : " + e.toString());
+            }
+        }
+    }
+
+    private void storeUploader(PostInfo postInfo) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("posts").document(user.getUid()).set(postInfo)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        startToast("게시글 등록에 성공하였습니다");
+                        finish();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        startToast("게시글 등록에 실패하였습니다.");
+                        Log.w("Error writing document", e);
+                    }
+                });
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -104,7 +190,7 @@ public class WritingActivity extends BasisActivity {
                     contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
                 }
                 final String selection = "_id=?";
-                final String[] selectionArgs = new String[] {
+                final String[] selectionArgs = new String[]{
                         split[1]
                 };
 
