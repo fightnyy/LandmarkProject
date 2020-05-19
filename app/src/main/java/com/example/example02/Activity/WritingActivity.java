@@ -34,6 +34,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.core.Tag;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -45,11 +47,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.List;
 
 public class WritingActivity extends BasisActivity {
     private Boolean isPermission = true;
     private static final int GALLERY_CODE = 10;
+    private static final String TAG = "WritingActivity";
 
     private ImageView Image;
     private String imagePath;
@@ -90,7 +94,9 @@ public class WritingActivity extends BasisActivity {
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();
-        final StorageReference mountainImagesRef = storageRef.child("posts/" + "" + user.getUid() + "/postImage.jpg");
+        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+        final DocumentReference documentReference = firebaseFirestore.collection("posts").document();
+        final StorageReference mountainImagesRef = storageRef.child("posts/"  + documentReference.getId() + "/postImage.jpg");
 
         if (imagePath == null) {
             startSettingImage();
@@ -112,8 +118,8 @@ public class WritingActivity extends BasisActivity {
                         if (task.isSuccessful()) {
                             Uri downloadUri = task.getResult();
 
-                            PostInfo postInfo = new PostInfo(writingText, downloadUri.toString());
-                            storeUploader(postInfo);
+                            PostInfo postInfo = new PostInfo(writingText, downloadUri.toString(), user.getUid(), new Date());
+                            storeUploader(documentReference, postInfo);
                         } else {
                             startToast("게시글을 올리는대 실패하였습니다.");
                         }
@@ -125,23 +131,20 @@ public class WritingActivity extends BasisActivity {
         }
     }
 
-    private void storeUploader(PostInfo postInfo) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("posts").document(user.getUid()).set(postInfo)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        startToast("게시글 등록에 성공하였습니다");
-                        finish();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        startToast("게시글 등록에 실패하였습니다.");
-                        Log.w("Error writing document", e);
-                    }
-                });
+    private void storeUploader(DocumentReference documentReference, PostInfo postInfo) {
+        documentReference.set(postInfo).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                startToast("게시글 등록에 성공하였습니다.");
+                finish();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                startToast("게시글 등록에 실패하였습니다.");
+                Log.w(TAG, "Error writing document", e);
+            }
+        });
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

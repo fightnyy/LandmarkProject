@@ -149,6 +149,7 @@
     </LinearLayout>
 
     <RelativeLayout
+        android:id="@+id/rellay2"
         android:layout_below="@+id/linear"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -189,6 +190,26 @@
                     android:background="@color/grey"/>
 
             </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/rellay3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="50dp"
+                >
+
+                <GridView
+                    android:id="@+id/gridView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:horizontalSpacing="1dp"
+                    android:numColumns="2"
+                    android:stretchMode="columnWidth"
+                    android:verticalSpacing="1dp">
+                </GridView>
+
+            </RelativeLayout>
 
         </LinearLayout>
 
