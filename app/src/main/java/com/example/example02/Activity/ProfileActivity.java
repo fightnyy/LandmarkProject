@@ -4,46 +4,50 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
 import com.bumptech.glide.request.RequestOptions;
-import com.example.example02.Activity.BasisActivity;
-import com.example.example02.Activity.ProfileSettingActivity;
 import com.example.example02.GlideApp;
+import com.example.example02.PostInfo;
 import com.example.example02.R;
+import com.example.example02.View.PostView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.Date;
 
 public class ProfileActivity extends BasisActivity {
     private static final String TAG = "ProfileActivity";
+    GridView postList;
+    PostAdapter postAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
+        postList = (GridView)findViewById(R.id.gridView);
+        postAdapter = new PostAdapter();
+        String result;
+
+        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         DocumentReference docRef = db.collection("users").document(user.getUid());
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -72,6 +76,47 @@ public class ProfileActivity extends BasisActivity {
             }
         });
 
+        /*db.collection("posts")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                if(user.getUid() == document.getData().get("publisher")){
+                                    PostInfo postInfo = new PostInfo(document.getData().get("name").toString(),
+                                            document.getData().get("photoUrl").toString(), document.getData().get("publisher").toString(),
+                                            (Date) document.getData().get("createdAt"));
+                                    postAdapter.addItem(postInfo);
+                                    Log.d(TAG,  postInfo.getpublisher());
+                                }
+                            }
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });*/
+
+        db.collectionGroup("posts").whereEqualTo("publisher", user.getUid()).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                PostInfo postInfo = new PostInfo(document.getData().get("name").toString(),
+                                        document.getData().get("photoUrl").toString(), document.getData().get("publisher").toString(),
+                                        (Date) document.getData().get("createdAt"));
+                                postAdapter.addItem(postInfo);
+                                Log.d(TAG,  postInfo.getpublisher());
+                            }
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+
+
+
         findViewById(R.id.setting).setOnClickListener(onClickListener);
         findViewById(R.id.Profileimage).setOnClickListener(onClickListener);
     }
@@ -87,6 +132,36 @@ public class ProfileActivity extends BasisActivity {
             }
         }
     };
+
+    class PostAdapter extends BaseAdapter {
+        ArrayList<PostInfo> items = new ArrayList<PostInfo>();
+        @Override
+        public int getCount() {
+            return items.size();
+        }
+
+        public void addItem(PostInfo postInfo){
+            items.add(postInfo);
+        }
+
+        @Override
+        public PostInfo getItem(int i) {
+            return items.get(i);
+        }
+
+        @Override
+        public long getItemId(int i) {
+            return i;
+        }
+
+        @Override
+        public View getView(int i, View view, ViewGroup viewGroup) {
+            PostView postView = new PostView(getApplicationContext());
+            postView.setItem(items.get(i));
+            return postView;
+        }
+    }
+
 
     private void setProflieImage(DocumentSnapshot document, ImageView ProfileImage){
         GlideApp.with(this).asBitmap().load(document.getData().get("photoUrl").toString()).apply(new RequestOptions().circleCrop()).into(ProfileImage);

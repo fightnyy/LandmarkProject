@@ -195,8 +195,7 @@
                 android:id="@+id/rellay3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="50dp"
-                >
+                android:layout_marginBottom="50dp">
 
                 <GridView
                     android:id="@+id/gridView"

@@ -90,7 +90,7 @@ public class WritingActivity extends BasisActivity {
     };
 
     private void postUpdata() {
-        final String writingText = ((EditText) findViewById(R.id.caption)).getText().toString();
+        final String writingText = ((EditText)findViewById(R.id.caption)).getText().toString();
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();

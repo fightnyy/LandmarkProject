@@ -21,6 +21,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         android:usesCleartextTraffic="true">
+        <activity android:name=".View.PostView"></activity>
+
         <meta-data
             android:name="com.google.android.actions"
             android:resource="@xml/actions" />

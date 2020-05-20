@@ -3,22 +3,22 @@ package com.example.example02;
 import java.util.Date;
 
 public class PostInfo {
-    private String writingText;
+    private String postText;
     private String photoUrl;
     private String publisher;
     private Date createdAt;
 
-    public PostInfo(String writingText, String photoUrl, String publisher, Date createdAt) {
-        this.writingText = writingText;
+    public PostInfo(String postText, String photoUrl, String publisher, Date createdAt) {
+        this.postText = postText;
         this.photoUrl = photoUrl;
         this.publisher = publisher;
         this.createdAt = createdAt;
     }
 
-    public String getName() {
-        return this.writingText;
+    public String getpostText() {
+        return this.postText;
     }
-    public void setName(String name) { this.writingText = name; }
+    public void setpostText(String postText) { this.postText = postText; }
 
     public String getPhotoUrl(){ return this.photoUrl; }
     public void setPhotoUrl(String photoUrl){ this.photoUrl = photoUrl; }
@@ -27,5 +27,5 @@ public class PostInfo {
     public void setpublisher(String publisher){ this.publisher = publisher; }
 
     public Date getcreatedAt(){ return this.createdAt; }
-    public void setcreatedAtr(Date createdAt){ this.createdAt = createdAt; }
+    public void setcreatedAt(Date createdAt){ this.createdAt = createdAt; }
 }
