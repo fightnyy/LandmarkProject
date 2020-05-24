@@ -1,4 +1,4 @@
-package com.example.example02;
+package com.example.example02.Info;
 
 public class ProfileInfo {
     private String name;

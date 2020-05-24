@@ -52,7 +52,7 @@ public class PasswordResetActivity extends BasisActivity {
                     });
 
         } else {
-            Toast.makeText(this, "이메일읍 입력해 주세요.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "이메일을 입력해 주세요.", Toast.LENGTH_SHORT).show();
         }
     }
 

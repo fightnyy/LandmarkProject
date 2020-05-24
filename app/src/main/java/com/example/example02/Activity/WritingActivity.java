@@ -16,14 +16,11 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 
-import com.example.example02.Activity.BasisActivity;
 import com.example.example02.GlideApp;
-import com.example.example02.PostInfo;
-import com.example.example02.ProfileInfo;
+import com.example.example02.Info.PostInfo;
 import com.example.example02.R;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -32,9 +29,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.core.Tag;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -84,6 +78,8 @@ public class WritingActivity extends BasisActivity {
                     break;
                 case R.id.Post_update:
                     postUpdata();
+                    makeToast("성공");
+                    finish();
                     break;
             }
         }
@@ -121,7 +117,7 @@ public class WritingActivity extends BasisActivity {
                             PostInfo postInfo = new PostInfo(writingText, downloadUri.toString(), user.getUid(), new Date());
                             storeUploader(documentReference, postInfo);
                         } else {
-                            startToast("게시글을 올리는대 실패하였습니다.");
+                            startToast("게시글을 올리는데 실패하였습니다.");
                         }
                     }
                 });
@@ -299,5 +295,10 @@ public class WritingActivity extends BasisActivity {
      */
     public static boolean isMediaDocument(Uri uri) {
         return "com.android.providers.media.documents".equals(uri.getAuthority());
+    }
+
+    public void makeToast(String msg)
+    {
+        Toast.makeText(this,"게시글 등록을 "+msg+"하였습니다.",Toast.LENGTH_SHORT).show();
     }
 }

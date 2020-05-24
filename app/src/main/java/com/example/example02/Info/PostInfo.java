@@ -1,4 +1,4 @@
-package com.example.example02;
+package com.example.example02.Info;
 
 import java.util.Date;
 

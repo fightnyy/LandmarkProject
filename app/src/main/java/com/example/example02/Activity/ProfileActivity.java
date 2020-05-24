@@ -14,7 +14,7 @@ import androidx.annotation.NonNull;
 
 import com.bumptech.glide.request.RequestOptions;
 import com.example.example02.GlideApp;
-import com.example.example02.PostInfo;
+import com.example.example02.Info.PostInfo;
 import com.example.example02.R;
 import com.example.example02.View.PostView;
 import com.google.android.gms.tasks.OnCompleteListener;

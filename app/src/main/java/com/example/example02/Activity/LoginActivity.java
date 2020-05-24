@@ -2,10 +2,13 @@ package com.example.example02.Activity;
 
 import androidx.annotation.NonNull;
 
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.example02.R;
@@ -17,6 +20,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends BasisActivity {
     private FirebaseAuth mAuth;
+    ProgressDialog Dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +54,7 @@ public class LoginActivity extends BasisActivity {
     private void login() {
         String email = ((EditText) findViewById(R.id.emailText)).getText().toString();
         String password = ((EditText) findViewById(R.id.passwordText)).getText().toString();
-
+        
         if (email.length() > 0 && password.length() > 0) {
 
             mAuth.signInWithEmailAndPassword(email, password)
@@ -80,6 +84,7 @@ public class LoginActivity extends BasisActivity {
 
     private void myStartActivity(Class c){
         Intent intent = new Intent(this, c);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
 }
