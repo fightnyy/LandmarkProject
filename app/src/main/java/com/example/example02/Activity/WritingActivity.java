@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.example.example02.Adapter.FeedAdapter;
 import com.example.example02.GlideApp;
 import com.example.example02.Info.PostInfo;
 import com.example.example02.R;
@@ -53,6 +54,7 @@ public class WritingActivity extends BasisActivity {
     private String imagePath;
 
     final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    FeedAdapter feedAdapter=new FeedAdapter();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,12 +102,16 @@ public class WritingActivity extends BasisActivity {
             try {
                 InputStream stream = new FileInputStream(new File(imagePath));
                 UploadTask uploadTask = mountainImagesRef.putStream(stream);
+                Log.d("good",""+uploadTask.toString());
+                Log.d("good",""+stream.toString());
+                Log.d("good",""+imagePath.toString());
                 uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                     @Override
                     public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
                         if (!task.isSuccessful()) {
                             throw task.getException();
                         }
+                        Log.d("good",mountainImagesRef.getDownloadUrl().toString());
                         return mountainImagesRef.getDownloadUrl();
                     }
                 }).addOnCompleteListener(new OnCompleteListener<Uri>() {
@@ -113,7 +119,7 @@ public class WritingActivity extends BasisActivity {
                     public void onComplete(@NonNull Task<Uri> task) {
                         if (task.isSuccessful()) {
                             Uri downloadUri = task.getResult();
-
+                            feedAdapter.addItem(downloadUri.toString());
                             PostInfo postInfo = new PostInfo(writingText, downloadUri.toString(), user.getUid(), new Date());
                             storeUploader(documentReference, postInfo);
                         } else {

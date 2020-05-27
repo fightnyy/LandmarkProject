@@ -4,9 +4,14 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+
+import androidx.annotation.NonNull;
 
 import com.example.example02.R;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -22,7 +27,8 @@ public class MainActivity extends BasisActivity {
         if (user == null) {
             startLoginActivity();
         }
-
+        BottomNavigationView bottomNavigationView=findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setOnNavigationItemSelectedListener(onBottomNavigationListener);
         findViewById(R.id.LocationButton).setOnClickListener(onClickListener);
         findViewById(R.id.logoutButton).setOnClickListener(onClickListener);
         findViewById(R.id.writingButton).setOnClickListener(onClickListener);
@@ -53,6 +59,20 @@ public class MainActivity extends BasisActivity {
                     startLocationActivity();
                     break;
             }
+        }
+    };
+
+    BottomNavigationView.OnNavigationItemSelectedListener onBottomNavigationListener=new BottomNavigationView.OnNavigationItemSelectedListener() {
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+            switch (menuItem.getItemId())
+            {
+                case R.id.feed:
+                    Intent intent=new Intent(getApplicationContext(),FeedActivity.class);
+                    startActivity(intent);
+                    return true;
+            }
+            return true;
         }
     };
 
