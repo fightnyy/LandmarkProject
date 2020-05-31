@@ -21,7 +21,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Activity.FeedActivity"></activity>
+        <activity android:name=".Adapter.PostAdapter"></activity>
+        <activity android:name=".Activity.FeedActivity" />
         <activity android:name=".View.PostView" />
 
         <meta-data

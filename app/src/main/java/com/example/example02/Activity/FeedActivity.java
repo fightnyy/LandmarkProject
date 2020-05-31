@@ -26,5 +26,6 @@ public class FeedActivity extends AppCompatActivity {
         FeedAdapter adapter = new FeedAdapter();
         recyclerView.setAdapter(adapter);
     }
+
 }
 

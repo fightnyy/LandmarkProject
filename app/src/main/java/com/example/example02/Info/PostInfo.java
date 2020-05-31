@@ -1,12 +1,20 @@
 package com.example.example02.Info;
 
+import com.google.firebase.database.Exclude;
+
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PostInfo {
     private String postText;
     private String photoUrl;
     private String publisher;
     private Date createdAt;
+
+    public PostInfo(){
+        // Default constructor required for calls to DataSnapshot.getValue(Post.class)
+    }
 
     public PostInfo(String postText, String photoUrl, String publisher, Date createdAt) {
         this.postText = postText;
@@ -15,17 +23,13 @@ public class PostInfo {
         this.createdAt = createdAt;
     }
 
-    public String getpostText() {
-        return this.postText;
+    @Exclude
+    public Map<String, Object> toMap() {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("postText", postText);
+        result.put("photoUrl", photoUrl);
+        result.put("publisher", publisher);
+        result.put("createdAt", createdAt);
+        return result;
     }
-    public void setpostText(String postText) { this.postText = postText; }
-
-    public String getPhotoUrl(){ return this.photoUrl; }
-    public void setPhotoUrl(String photoUrl){ this.photoUrl = photoUrl; }
-
-    public String getpublisher(){ return this.publisher; }
-    public void setpublisher(String publisher){ this.publisher = publisher; }
-
-    public Date getcreatedAt(){ return this.createdAt; }
-    public void setcreatedAt(Date createdAt){ this.createdAt = createdAt; }
 }

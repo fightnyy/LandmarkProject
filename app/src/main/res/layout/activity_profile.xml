@@ -26,8 +26,8 @@
                 android:layout_height="120dp"
                 android:layout_margin="9dp"
                 android:adjustViewBounds="true"
-                android:padding="3dp"
                 android:background="@drawable/circle"
+                android:padding="3dp"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_persondp" />
 
@@ -40,8 +40,8 @@
             android:layout_below="@+id/imgUser"
             android:layout_centerHorizontal="true"
             android:layout_margin="15sp"
-            android:textColorHint="@color/white"
             android:textColor="@color/white"
+            android:textColorHint="@color/white"
             android:textSize="32sp" />
 
         <TextView
@@ -57,16 +57,16 @@
             android:textSize="14dp" />
 
         <ImageView
-            android:clickable="true"
             android:id="@+id/setting"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="15dp"
             android:layout_marginTop="15dp"
-            android:src="@drawable/ic_settings"
+            android:layout_marginRight="15dp"
+            android:adjustViewBounds="true"
+            android:clickable="true"
             android:scaleType="centerInside"
-            android:adjustViewBounds="true"/>
+            android:src="@drawable/ic_settings" />
 
     </RelativeLayout>
 
@@ -82,10 +82,10 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="1"
-            android:paddingTop="5dp"
+            android:background="@color/followersBg"
             android:gravity="center"
-            android:paddingBottom="5dp"
-            android:background="@color/followersBg">
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -111,15 +111,16 @@
             </LinearLayout>
 
         </RelativeLayout>
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:paddingTop="5dp"
-            android:gravity="center"
-            android:paddingBottom="5dp"
             android:layout_gravity="center"
-            android:background="@color/followingBg">
+            android:layout_weight="1"
+            android:background="@color/followingBg"
+            android:gravity="center"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -150,16 +151,16 @@
 
     <RelativeLayout
         android:id="@+id/rellay2"
-        android:layout_below="@+id/linear"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_below="@+id/linear">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp"
             android:layout_marginTop="20dp"
+            android:layout_marginRight="30dp"
             android:orientation="vertical">
 
             <LinearLayout
@@ -171,9 +172,9 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="Email"
                     android:textColor="@color/headings"
-                    android:textSize="13sp"
-                    android:text="Email"/>
+                    android:textSize="13sp" />
 
                 <TextView
                     android:id="@+id/tv_email"
@@ -181,34 +182,22 @@
                     android:layout_height="wrap_content"
                     android:textColor="#000000"
                     android:textColorHint="#000000"
-                    android:textSize="18sp"/>
+                    android:textSize="18sp" />
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginTop="15dp"
-                    android:background="@color/grey"/>
+                    android:background="@color/grey" />
 
             </LinearLayout>
 
-            <RelativeLayout
-                android:id="@+id/rellay3"
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="50dp">
+                android:layout_height="match_parent" />
 
-                <GridView
-                    android:id="@+id/gridView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:horizontalSpacing="1dp"
-                    android:numColumns="2"
-                    android:stretchMode="columnWidth"
-                    android:verticalSpacing="1dp">
-                </GridView>
-
-            </RelativeLayout>
 
         </LinearLayout>
 
