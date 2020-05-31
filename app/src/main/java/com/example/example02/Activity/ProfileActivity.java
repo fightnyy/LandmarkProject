@@ -3,8 +3,9 @@ package com.example.example02.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.GridView;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -12,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.example02.Adapter.PostAdapter;
 import com.example.example02.GlideApp;
@@ -21,15 +23,25 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class ProfileActivity extends BasisActivity {
     private static final String TAG = "ProfileActivity";
+
+    private RecyclerView recyclerView;
+
+    private List<PostInfo> imageDTOs = new ArrayList<>();
+    private List<PostInfo> result = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,10 +49,8 @@ public class ProfileActivity extends BasisActivity {
         setContentView(R.layout.activity_profile);
 
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        final RecyclerView recyclerView = findViewById(R.id.recyclerView);
-        final GridLayoutManager layoutManager = new GridLayoutManager( this , 2);
 
         DocumentReference docRef = db.collection("users").document(user.getUid());
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -69,28 +79,31 @@ public class ProfileActivity extends BasisActivity {
             }
         });
 
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        GridLayoutManager layoutManager = new GridLayoutManager(this,2);
+        recyclerView.setLayoutManager(layoutManager);
+        final BoardRecyclerViewAdapter boardRecyclerViewAdapter = new BoardRecyclerViewAdapter();
+        recyclerView.setAdapter(boardRecyclerViewAdapter);
 
-        db.collection("posts").get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            recyclerView.setLayoutManager(layoutManager);
-                            final PostAdapter postAdapter = new PostAdapter();
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                PostInfo postInfo = new PostInfo(document.getData().get("postText").toString(),
-                                        document.getData().get("photoUrl").toString(), document.getData().get("publisher").toString(),
-                                        null);
-                                document.getData().getClass();
-                                postAdapter.addItem(postInfo);
-                            }
-                            recyclerView.setAdapter(postAdapter);
-                        } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
-                        }
-                    }
-                });
+        database.getReference().child("posts").orderByChild("publisher").equalTo(user.getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
 
+                imageDTOs.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    PostInfo imageDTO = snapshot.getValue(PostInfo.class);
+                    imageDTOs.add(imageDTO);
+                }
+                for(int i = 0; i < imageDTOs.size(); i++)   result.add(imageDTOs.get(imageDTOs.size() - i - 1));
+
+                boardRecyclerViewAdapter.notifyDataSetChanged();
+
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
         findViewById(R.id.setting).setOnClickListener(onClickListener);
         findViewById(R.id.Profileimage).setOnClickListener(onClickListener);
@@ -107,6 +120,37 @@ public class ProfileActivity extends BasisActivity {
             }
         }
     };
+
+    class BoardRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_post_view, parent, false);
+
+            return new BoardRecyclerViewAdapter.CustomViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+            Glide.with(holder.itemView.getContext()).load(result.get(position).getPhotoUrl()).into(((BoardRecyclerViewAdapter.CustomViewHolder)holder).imageView);
+        }
+
+        @Override
+        public int getItemCount() {
+            return imageDTOs.size();
+        }
+
+        private class CustomViewHolder extends RecyclerView.ViewHolder {
+            ImageView imageView;
+
+
+            public CustomViewHolder(View view) {
+                super(view);
+                imageView = (ImageView) view.findViewById(R.id.postView);
+            }
+        }
+    }
 
     private void setProflieImage(DocumentSnapshot document, ImageView ProfileImage) {
         GlideApp.with(this).asBitmap().load(document.getData().get("photoUrl").toString()).apply(new RequestOptions().circleCrop()).into(ProfileImage);

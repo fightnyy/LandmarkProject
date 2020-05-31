@@ -58,7 +58,7 @@ public class MapActivity extends AppCompatActivity
         mMap.animateCamera(CameraUpdateFactory.zoomTo(12));
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-        Query query = reference.child("locations");
+        Query query = reference.child("locations").child("Suwon");
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
