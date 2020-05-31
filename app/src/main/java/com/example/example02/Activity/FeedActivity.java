@@ -45,14 +45,13 @@ public class FeedActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                imageDTOs.clear();;
-                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                imageDTOs.clear();
+                ;
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     PostInfo imageDTO = snapshot.getValue(PostInfo.class);
                     imageDTOs.add(imageDTO);
                 }
                 boardRecyclerViewAdapter.notifyDataSetChanged();
-
-
 
 
             }
@@ -65,7 +64,6 @@ public class FeedActivity extends AppCompatActivity {
 
 
     }
-
     class BoardRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         @Override

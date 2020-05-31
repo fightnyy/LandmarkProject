@@ -16,11 +16,12 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
-
+import com.bumptech.glide.annotation.GlideModule;
+import com.bumptech.glide.module.AppGlideModule;
 import androidx.annotation.NonNull;
 
 //import com.example.example02.Adapter.FeedAdapter;
-import com.example.example02.GlideApp;
+import glide
 import com.example.example02.Info.PostInfo;
 import com.example.example02.R;
 import com.google.android.gms.tasks.Continuation;
@@ -30,6 +31,11 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -43,7 +49,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class WritingActivity extends BasisActivity {
     private Boolean isPermission = true;
@@ -52,6 +60,7 @@ public class WritingActivity extends BasisActivity {
 
     private ImageView Image;
     private String imagePath;
+
 
     final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -80,21 +89,18 @@ public class WritingActivity extends BasisActivity {
                     break;
                 case R.id.Post_update:
                     postUpdata();
-                    makeToast("성공");
-                    finish();
                     break;
             }
         }
     };
 
     private void postUpdata() {
-        final String writingText = ((EditText)findViewById(R.id.caption)).getText().toString();
+        final String writingText = ((EditText) findViewById(R.id.caption)).getText().toString();
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();
-        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-        final DocumentReference documentReference = firebaseFirestore.collection("posts").document();
-        final StorageReference mountainImagesRef = storageRef.child("posts/"  + documentReference.getId() + "/postImage.jpg");
+        final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("posts");
+        final StorageReference mountainImagesRef = storageRef.child("posts/" + databaseReference.getKey() + "/postImage.jpg");
 
         if (imagePath == null) {
             startSettingImage();
@@ -108,7 +114,6 @@ public class WritingActivity extends BasisActivity {
                         if (!task.isSuccessful()) {
                             throw task.getException();
                         }
-                        Log.d("good",mountainImagesRef.getDownloadUrl().toString());
                         return mountainImagesRef.getDownloadUrl();
                     }
                 }).addOnCompleteListener(new OnCompleteListener<Uri>() {
@@ -116,8 +121,15 @@ public class WritingActivity extends BasisActivity {
                     public void onComplete(@NonNull Task<Uri> task) {
                         if (task.isSuccessful()) {
                             Uri downloadUri = task.getResult();
+
+
+                            String key = databaseReference.child("posts").push().getKey();
                             PostInfo postInfo = new PostInfo(writingText, downloadUri.toString(), user.getUid(), new Date());
-                            storeUploader(documentReference, postInfo);
+                            Map<String, Object> postValues = postInfo.toMap();
+
+                            databaseReference.child(key).setValue(postValues);
+                            startToast("게시글 등록에 성공하였습니다.");
+                            finish();
                         } else {
                             startToast("게시글을 올리는데 실패하였습니다.");
                         }
@@ -127,22 +139,6 @@ public class WritingActivity extends BasisActivity {
                 Log.e("로그", "에러 : " + e.toString());
             }
         }
-    }
-
-    private void storeUploader(DocumentReference documentReference, PostInfo postInfo) {
-        documentReference.set(postInfo).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                startToast("게시글 등록에 성공하였습니다.");
-                finish();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                startToast("게시글 등록에 실패하였습니다.");
-                Log.w(TAG, "Error writing document", e);
-            }
-        });
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -299,8 +295,7 @@ public class WritingActivity extends BasisActivity {
         return "com.android.providers.media.documents".equals(uri.getAuthority());
     }
 
-    public void makeToast(String msg)
-    {
-        Toast.makeText(this,"게시글 등록을 "+msg+"하였습니다.",Toast.LENGTH_SHORT).show();
+    public void makeToast(String msg) {
+        Toast.makeText(this, "게시글 등록을 " + msg + "하였습니다.", Toast.LENGTH_SHORT).show();
     }
 }
