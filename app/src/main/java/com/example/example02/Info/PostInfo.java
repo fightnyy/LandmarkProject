@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class PostInfo {
     private String postText;
-    private String photoUrl;
+    public String photoUrl;
     private String publisher;
     private Date createdAt;
 
