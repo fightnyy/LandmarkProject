@@ -16,12 +16,10 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
-import com.bumptech.glide.annotation.GlideModule;
-import com.bumptech.glide.module.AppGlideModule;
+
 import androidx.annotation.NonNull;
 
-//import com.example.example02.Adapter.FeedAdapter;
-import glide
+import com.example.example02.GlideApp;
 import com.example.example02.Info.PostInfo;
 import com.example.example02.R;
 import com.google.android.gms.tasks.Continuation;
@@ -61,8 +59,7 @@ public class WritingActivity extends BasisActivity {
     private ImageView Image;
     private String imagePath;
 
-
-    final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    private final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
 
     @Override
@@ -121,7 +118,6 @@ public class WritingActivity extends BasisActivity {
                     public void onComplete(@NonNull Task<Uri> task) {
                         if (task.isSuccessful()) {
                             Uri downloadUri = task.getResult();
-
 
                             String key = databaseReference.child("posts").push().getKey();
                             PostInfo postInfo = new PostInfo(writingText, downloadUri.toString(), user.getUid(), new Date());
