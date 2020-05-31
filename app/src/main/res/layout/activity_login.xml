@@ -53,6 +53,8 @@
                 android:textColor="@color/address"
                 android:textColorHint="#758A8D" />
 
+            ¡
+
             <EditText
                 android:id="@+id/passwordText"
                 android:layout_width="280dp"

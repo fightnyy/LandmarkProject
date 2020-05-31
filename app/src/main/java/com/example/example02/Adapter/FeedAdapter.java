@@ -34,9 +34,8 @@ import java.util.ArrayList;
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
 public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
-    static int num;
-
     static ArrayList<String> photoList = new ArrayList<>();
+
 
 
     @NonNull
@@ -44,15 +43,16 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View itemview = inflater.inflate(R.layout.feed_list, parent, false);
+        DatabaseReference mDatabase;// ...
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
         return new ViewHolder(itemview);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        num = position;
         String item = photoList.get(position);
         holder.setItem(item);
-
     }
 
     @Override
@@ -77,48 +77,17 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView feed_image;
+    ImageView feed_image;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            feed_image=itemView.findViewById(R.id.feed_image);
         }
 
         public void setItem(String str) {
-            feed_image = itemView.findViewById(R.id.feed_image);
+           Glide.with(itemView).load(str).into(feed_image);
 
-            new DownloadFilesTask().execute(str);
         }
-
-        private class DownloadFilesTask extends AsyncTask<String, Void, Bitmap> {
-            @Override
-            protected Bitmap doInBackground(String[] strings) {
-                Bitmap bmp = null;
-                try {
-                    String img_url = strings[num]; //url of the image
-                    URL url = new URL(img_url);
-                    bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return bmp;
-            }
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-            }
-
-
-            @Override
-            protected void onPostExecute(Bitmap result) {
-                // doInBackground 에서 받아온 total 값 사용 장소
-                feed_image.setImageBitmap(result);
-            }
-        }
-
-
     }
 }
 
