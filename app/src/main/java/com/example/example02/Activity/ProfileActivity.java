@@ -153,7 +153,9 @@ public class ProfileActivity extends BasisActivity {
     }
 
     private void setProflieImage(DocumentSnapshot document, ImageView ProfileImage) {
-        GlideApp.with(this).asBitmap().load(document.getData().get("photoUrl").toString()).apply(new RequestOptions().circleCrop()).into(ProfileImage);
+        String photoUrl = document.getData().get("photoUrl").toString();
+        if(photoUrl != null)
+            GlideApp.with(this).asBitmap().load(document.getData().get("photoUrl").toString()).apply(new RequestOptions().circleCrop()).into(ProfileImage);
     }
 
     private void profileSetting() {

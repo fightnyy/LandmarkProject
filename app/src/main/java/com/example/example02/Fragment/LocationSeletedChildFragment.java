@@ -1,5 +1,6 @@
 package com.example.example02.Fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.fragment.app.ListFragment;
@@ -11,7 +12,10 @@ import android.view.ViewGroup;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import com.example.example02.Activity.MainActivity;
+import com.example.example02.Activity.WritingActivity;
 import com.example.example02.Adapter.LocationAdapter;
+import com.example.example02.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -19,12 +23,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 
 public class LocationSeletedChildFragment extends ListFragment {
     private static final String TAG = "LocationSeletedChildFragment";
+    private ArrayList<String> mapList = new ArrayList<>();
     private LocationAdapter locationAdapter;
 
     @Override
@@ -48,6 +54,9 @@ public class LocationSeletedChildFragment extends ListFragment {
                     try {
                         map = objectMap.get("name").toString();
                         locationAdapter.addItem(map);
+                        mapList.add(map);
+                        //if(locationAdapter.getCount() > 5)
+                        //    setListViewHeightBasedOnItems(listView);
                     } catch (NullPointerException e) {
                         Log.e(TAG, "onDataChange: NullPointerException: " + e.getMessage());
                     }
@@ -59,6 +68,10 @@ public class LocationSeletedChildFragment extends ListFragment {
             }
         });
         return super.onCreateView(inflater, container, savedInstanceState);
+    }
+
+    public void onListItemClick (ListView l, View v, int position, long id) {
+        ((WritingActivity)getActivity()).setArea(mapList.get(position));
     }
 
     public static boolean setListViewHeightBasedOnItems(ListView listView) {
