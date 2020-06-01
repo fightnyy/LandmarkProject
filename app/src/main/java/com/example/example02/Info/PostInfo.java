@@ -1,6 +1,7 @@
 package com.example.example02.Info;
 
 import com.google.firebase.database.Exclude;
+import com.google.firebase.firestore.ServerTimestamp;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -8,8 +9,9 @@ import java.util.Map;
 
 public class PostInfo {
     private String postText;
-    public String photoUrl;
+    private String photoUrl;
     private String publisher;
+    @ServerTimestamp
     private Date createdAt;
 
     public PostInfo(){
@@ -21,6 +23,10 @@ public class PostInfo {
         this.photoUrl = photoUrl;
         this.publisher = publisher;
         this.createdAt = createdAt;
+    }
+
+    public String getPhotoUrl(){
+        return this.photoUrl;
     }
 
     @Exclude

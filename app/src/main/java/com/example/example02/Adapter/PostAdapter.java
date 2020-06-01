@@ -13,8 +13,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.example.example02.Info.PostInfo;
 import com.example.example02.R;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -24,23 +27,22 @@ import java.util.ArrayList;
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     private static final String TAG = "PostAdapter";
     ArrayList<PostInfo> items = new ArrayList<PostInfo>();
-    static int num;
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View itemview = inflater.inflate(R.layout.activity_post_view, parent, false);
+        View itemview = inflater.inflate(R.layout.feed_list, parent, false);
+        DatabaseReference mDatabase;// ...
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
         return new ViewHolder(itemview);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        String path = "/storage/emulated/0/Download/PS16011800314.jpg";
-        num = position;
-       // String item = Uri.parse(items.get(position)).toString();
-      //  holder.setItem(item);
-        //Log.d(TAG, item);
+        String item = items.get(position).getPhotoUrl();
+        holder.setItem(item);
     }
 
     @Override
@@ -70,46 +72,16 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView postView;
+        ImageView post_image;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            post_image = itemView.findViewById(R.id.postView);
         }
 
         public void setItem(String str) {
-            postView = itemView.findViewById(R.id.postView);
+            Glide.with(itemView).load(str).into(post_image);
 
-            new DownloadFilesTask().execute(str);
         }
-
-        private class DownloadFilesTask extends AsyncTask<String, Void, Bitmap> {
-            @Override
-            protected Bitmap doInBackground(String[] strings) {
-                Bitmap bmp = null;
-                try {
-                    String img_url = strings[num]; //url of the image
-                    URL url = new URL(img_url);
-                    bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return bmp;
-            }
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-            }
-
-            @Override
-            protected void onPostExecute(Bitmap result) {
-                // doInBackground 에서 받아온 total 값 사용 장소
-                postView.setImageBitmap(result);
-            }
-        }
-
-
     }
 }

@@ -4,12 +4,13 @@
     android:layout_height="match_parent">
 
     <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:background="@drawable/white_grey_border_bottom">
 
             <RelativeLayout
@@ -72,7 +73,6 @@
 
             </RelativeLayout>
 
-
             <RelativeLayout
                 android:id="@+id/relLayout3"
                 android:layout_width="match_parent"
@@ -120,13 +120,18 @@
                     android:src="@drawable/arrow_right" />
 
             </RelativeLayout>
-
+            <FrameLayout
+                android:id="@+id/container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/relLayout4">
+            </FrameLayout>
 
             <RelativeLayout
                 android:id="@+id/relLayout5"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@+id/relLayout4">
+                android:layout_below="@+id/container">
 
                 <TextView
                     android:id="@+id/username"
@@ -149,8 +154,6 @@
                     android:src="@drawable/arrow_right" />
 
             </RelativeLayout>
-
         </RelativeLayout>
-
     </ScrollView>
 </RelativeLayout>

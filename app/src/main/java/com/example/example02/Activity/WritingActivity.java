@@ -19,23 +19,17 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.example.example02.Fragment.LocationSeletedFragment;
 import com.example.example02.GlideApp;
 import com.example.example02.Info.PostInfo;
 import com.example.example02.R;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -47,7 +41,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -61,6 +54,8 @@ public class WritingActivity extends BasisActivity {
 
     private final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
+    private LocationSeletedFragment LSF;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +64,8 @@ public class WritingActivity extends BasisActivity {
 
         tedPermission();
         startSettingImage();
+
+        LSF = new LocationSeletedFragment();
 
         Image = (ImageView) findViewById(R.id.imageShare);
         findViewById(R.id.resetButton).setOnClickListener(onClickListener);
@@ -83,6 +80,7 @@ public class WritingActivity extends BasisActivity {
                     startSettingImage();
                     break;
                 case R.id.Location_selection:
+                    startLocationSelection();
                     break;
                 case R.id.Post_update:
                     postUpdata();
@@ -144,6 +142,10 @@ public class WritingActivity extends BasisActivity {
             System.out.println(data.getData());
             GlideApp.with(this).asBitmap().load(imagePath).into(Image);
         }
+    }
+
+    private void startLocationSelection(){
+        getSupportFragmentManager().beginTransaction().replace(R.id.container, LSF).commit();
     }
 
     public String getPath(final Context context, Uri uri) {
