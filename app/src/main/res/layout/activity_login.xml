@@ -83,6 +83,12 @@
                 android:textSize="20dp"
                 android:textStyle="bold" />
 
+            <com.google.android.gms.common.SignInButton
+                android:id="@+id/googlelogin"
+                android:layout_width="280dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" />
+
             <TextView
                 android:id="@+id/registerButton"
                 android:layout_width="wrap_content"
@@ -100,6 +106,8 @@
                 android:layout_marginTop="10dp"
                 android:text="password reset"
                 android:textSize="18dp" />
+            
+
 
         </LinearLayout>
 
