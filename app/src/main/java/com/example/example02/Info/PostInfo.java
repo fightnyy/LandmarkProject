@@ -19,6 +19,13 @@ public class PostInfo {
     public PostInfo(){
         // Default constructor required for calls to DataSnapshot.getValue(Post.class)
     }
+    public PostInfo(String postText, String photoUrl, String publisher, String location, String area) {
+        this.postText = postText;
+        this.photoUrl = photoUrl;
+        this.publisher = publisher;
+        this.location = location;
+        this.area = area;
+    }
 
     public PostInfo(String postText, String photoUrl, String publisher, String location, String area, Date createdAt) {
         this.postText = postText;
@@ -32,6 +39,8 @@ public class PostInfo {
     public String getPhotoUrl(){
         return this.photoUrl;
     }
+    public String getPostText() { return this.postText; }
+    public String getArea() { return this.area; }
 
     @Exclude
     public Map<String, Object> toMap() {

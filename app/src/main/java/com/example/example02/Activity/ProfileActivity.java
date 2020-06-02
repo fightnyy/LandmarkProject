@@ -88,20 +88,20 @@ public class ProfileActivity extends BasisActivity {
         database.getReference().child("posts").orderByChild("publisher").equalTo(user.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
                 imageDTOs.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     PostInfo imageDTO = snapshot.getValue(PostInfo.class);
                     imageDTOs.add(imageDTO);
                 }
-                for(int i = 0; i < imageDTOs.size(); i++)   result.add(imageDTOs.get(imageDTOs.size() - i - 1));
+                for(int i = 0; i < imageDTOs.size(); i++) {
+                    result.add(imageDTOs.get(imageDTOs.size() - i - 1));
+                    Log.d(TAG, imageDTOs.get(i).getPhotoUrl());
+                }
 
                 boardRecyclerViewAdapter.notifyDataSetChanged();
-
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
             }
         });
 
@@ -125,9 +125,7 @@ public class ProfileActivity extends BasisActivity {
 
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_post_view, parent, false);
-
             return new BoardRecyclerViewAdapter.CustomViewHolder(view);
         }
 

@@ -103,7 +103,7 @@ public class WritingActivity extends BasisActivity {
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();
         final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("posts");
-        final StorageReference mountainImagesRef = storageRef.child("posts/" + databaseReference.getKey() + "/postImage.jpg");
+        final StorageReference mountainImagesRef = storageRef.child("/postImage.jpg");
 
         if (imagePath == null) {
             startSettingImage();
