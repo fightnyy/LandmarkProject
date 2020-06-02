@@ -1,6 +1,8 @@
 package com.example.example02.Activity;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,9 +42,40 @@ public class FeedActivity extends AppCompatActivity {
         setContentView(R.layout.activity_feed);
         database = FirebaseDatabase.getInstance();
         final BoardRecyclerViewAdapter boardRecyclerViewAdapter = new BoardRecyclerViewAdapter();
-        Log.d("login","login");
-        findViewById(R.id.btn_search).setOnClickListener(listener);
-        editText=findViewById(R.id.et_search);
+        editText = findViewById(R.id.et_search);
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String str = editText.getText().toString();
+                database.getReference().child("posts").orderByChild("location").equalTo(str).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                        imageDTOs.clear();
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            PostInfo imageDTO = snapshot.getValue(PostInfo.class);
+                            imageDTOs.add(imageDTO);
+                        }
+                        boardRecyclerViewAdapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
 
 
         GridLayoutManager layoutManager = new GridLayoutManager(this, 3);
@@ -53,7 +86,7 @@ public class FeedActivity extends AppCompatActivity {
         database.getReference().child("posts").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d("login","reach1"+dataSnapshot.toString());
+                Log.d("login", "reach1" + dataSnapshot.toString());
                 imageDTOs.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     PostInfo imageDTO = snapshot.getValue(PostInfo.class);
@@ -72,40 +105,6 @@ public class FeedActivity extends AppCompatActivity {
 
 
     }
-
-    View.OnClickListener listener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            switch (v.getId()) {
-                case R.id.btn_search:
-                    search = editText.getText().toString();
-                    searchLocation(search);
-                    break;
-            }
-        }
-    };
-
-    void searchLocation(final String str) {
-        final BoardRecyclerViewAdapter boardRecyclerViewAdapter = new BoardRecyclerViewAdapter();
-        database.getReference().child("posts").orderByChild("location").equalTo(str).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                imageDTOs.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    PostInfo imageDTO = snapshot.getValue(PostInfo.class);
-                    imageDTOs.add(imageDTO);
-                }
-                boardRecyclerViewAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
 
     class BoardRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
