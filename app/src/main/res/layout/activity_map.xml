@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -11,5 +12,13 @@
         android:id="@+id/map"
         tools:context=".Activity.MapActivity"
         android:name="com.google.android.gms.maps.SupportMapFragment"/>
+
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="435dp"
+        android:layout_below="@+id/relLayout5"
+        tools:ignore="MissingConstraints">
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

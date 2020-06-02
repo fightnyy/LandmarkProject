@@ -18,7 +18,9 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 
+import com.example.example02.Fragment.LocationSeletedChildFragment;
 import com.example.example02.Fragment.LocationSeletedFragment;
 import com.example.example02.GlideApp;
 import com.example.example02.Info.PostInfo;
@@ -51,11 +53,17 @@ public class WritingActivity extends BasisActivity {
 
     private ImageView Image;
     private String imagePath;
+    private String area = null;
 
     private final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
     private LocationSeletedFragment LSF;
 
+
+    public void setArea(String area){
+        this.area = area;
+        startToast(area + "이 선택되었습니다.");
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,7 +107,9 @@ public class WritingActivity extends BasisActivity {
 
         if (imagePath == null) {
             startSettingImage();
-        } else {
+        } else if(area == null){
+            startToast("지역을 선택하여 주세요.");
+        }else {
             try {
                 InputStream stream = new FileInputStream(new File(imagePath));
                 UploadTask uploadTask = mountainImagesRef.putStream(stream);
@@ -118,7 +128,7 @@ public class WritingActivity extends BasisActivity {
                             Uri downloadUri = task.getResult();
 
                             String key = databaseReference.child("posts").push().getKey();
-                            PostInfo postInfo = new PostInfo(writingText, downloadUri.toString(), user.getUid(), new Date());
+                            PostInfo postInfo = new PostInfo(writingText, downloadUri.toString(), user.getUid(), "수원", area, new Date());
                             Map<String, Object> postValues = postInfo.toMap();
 
                             databaseReference.child(key).setValue(postValues);
@@ -144,8 +154,12 @@ public class WritingActivity extends BasisActivity {
         }
     }
 
+
     private void startLocationSelection(){
         getSupportFragmentManager().beginTransaction().replace(R.id.container, LSF).commit();
+        Bundle arguments = new Bundle();
+        arguments.putString("area", null);
+        LSF.setArguments(arguments);
     }
 
     public String getPath(final Context context, Uri uri) {

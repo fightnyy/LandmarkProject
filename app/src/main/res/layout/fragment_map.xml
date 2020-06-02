@@ -3,53 +3,53 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragment.LocationSeletedFragment">
+    tools:context=".Fragment.MapFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <RelativeLayout
         android:id="@+id/relLayout"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/relLayout3"
         android:background="@drawable/white_grey_border_bottom">
 
-        <TextView
-            android:id = "@+id/text01"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="15dp"
-            android:layout_margin="10dp" />
 
         <TextView
+            android:id="@+id/area"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginStart="15dp"
             android:layout_margin="20dp"
-            android:layout_toEndOf="@+id/text01"
-            android:text="수원"
-            android:textColor="#757575"
-            android:textSize="20sp" />
-
-        <ImageView
-            android:id="@+id/Location_selection02"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="20dp"
-            android:src="@drawable/ic_arrow_down" />
+            android:layout_marginStart="15dp"
+            android:textColor="@color/black"
+            android:textSize="23sp" />
 
     </RelativeLayout>
 
-    <FrameLayout
-        android:id="@+id/container02"
+    <RelativeLayout
+        android:id="@+id/relLayout2"
+        android:layout_below="@+id/relLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/relLayout">
+        android:layout_height="wrap_content"
+        android:background="@drawable/white_grey_border_bottom">
 
-    </FrameLayout>
+        <TextView
+            android:id="@+id/explainText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:layout_marginStart="15dp"
+            android:textColor="#757575"
+            android:textSize="15sp" />
 
+        <ImageView
+            android:id="@+id/Post_update"
+            android:layout_width="30dp"
+            android:layout_height="40dp"
+            android:layout_below="@+id/explainText"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="10dp"
+            android:src="@drawable/arrow_right" />
+
+    </RelativeLayout>
 
 </RelativeLayout>

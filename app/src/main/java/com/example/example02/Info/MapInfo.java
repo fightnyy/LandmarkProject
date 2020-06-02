@@ -1,16 +1,25 @@
 package com.example.example02.Info;
 
 
+import androidx.fragment.app.Fragment;
+
 public class MapInfo {
     private String location1;
     private String location2;
     private String name;
+    private String explain;
 
-    public MapInfo(String location1, String location2, String name) {
+    public MapInfo(){ }
+
+    public MapInfo(String location1, String location2, String name, String explain) {
         this.location1 = location1;
         this.location2 = location2;
         this.name = name;
+        this.explain = explain;
     }
+
+    public String getExplain(){ return this.explain; }
+    public void setExplain(String explain){ this.explain = explain; }
 
     public String getLocation1() {
         return this.location1;

@@ -1,13 +1,13 @@
 package com.example.example02.Activity;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Context;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.example02.Fragment.MapFragment;
 import com.example.example02.Info.MapInfo;
 import com.example.example02.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -36,13 +36,14 @@ public class MapActivity extends AppCompatActivity
     private static final String TAG = "MapActivity";
     private GoogleMap mMap;
     private final ArrayList<MapInfo> mapInfo = new ArrayList<>();
-    private final Context context = this;
+    private int checkPositionNum;
+    private MapFragment MF;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
-
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -63,12 +64,13 @@ public class MapActivity extends AppCompatActivity
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
-                    MapInfo map = new MapInfo(null, null, null);
+                    MapInfo map = new MapInfo();
                     Map<String, Object> objectMap = (HashMap<String, Object>) singleSnapshot.getValue();
                     try {
                         map.setLocation1(objectMap.get("location1").toString());
                         map.setLocation2(objectMap.get("location2").toString());
                         map.setName(objectMap.get("name").toString());
+                        map.setExplain(objectMap.get("explain").toString());
 
                         mapInfo.add(map);
                     } catch (NullPointerException e) {
@@ -94,7 +96,30 @@ public class MapActivity extends AppCompatActivity
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        Toast.makeText(this, marker.getTitle() + "\n" + marker.getPosition(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, marker.getTitle(), Toast.LENGTH_SHORT).show();
+        MF = new MapFragment();
+        for(int idx = 0; idx < mapInfo.size(); idx++){
+            if(marker.getTitle().equals(mapInfo.get(idx).getName())){
+                checkPositionNum = idx;
+                break;
+            }
+        }
+        startMapFragment();
         return false;
+    }
+
+
+    public int getCheckPositionNum(){
+        return checkPositionNum;
+    }
+
+    public Object getMapInfo(int num){
+        return mapInfo.get(num);
+    }
+
+    private void startMapFragment(){
+        getSupportFragmentManager().beginTransaction().replace(R.id.container, MF).commit();
+        Bundle arguments = new Bundle();
+        MF.setArguments(arguments);
     }
 }

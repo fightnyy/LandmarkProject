@@ -5,7 +5,6 @@ import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -46,15 +45,6 @@ public class LocationSeletedFragment extends Fragment {
                              Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_location_seleted , container, false);
 
-        /*ImageView Image = rootView.findViewById(R.id.imageShare);
-        Image.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Fragment LSFC = new LocationSeletedChildFragment();
-                FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-                transaction.replace(R.id.container02, LSFC).commit();
-            }
-        });*/
         return rootView;
     }
 
@@ -74,6 +64,8 @@ public class LocationSeletedFragment extends Fragment {
 
     private void insertNestedFragment(){
         getChildFragmentManager().beginTransaction().replace(R.id.container02, LSFC).commit();
-    }
 
+        Bundle arguments = getArguments();
+        LSFC.setArguments(arguments);
+    }
 }
