@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.example02.R;
@@ -35,19 +36,19 @@ public class LoginActivity extends BasisActivity {
     private FirebaseAuth mAuth;
     ProgressDialog Dialog;
     private GoogleSignInClient mGoogleSignInClient;
+    SignInButton signInButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // Initialize Firebase Auth
-
 
         findViewById(R.id.registerButton).setOnClickListener(onClickListener);
         findViewById(R.id.loginButton).setOnClickListener(onClickListener);
         findViewById(R.id.resetButton).setOnClickListener(onClickListener);
-        findViewById(R.id.googlelogin).setOnClickListener(onClickListener);
+        signInButton=findViewById(R.id.googlelogin);
+        signInButton.setOnClickListener(onClickListener);
 
         // [START config_signin]
         // Configure Google Sign In
@@ -60,7 +61,7 @@ public class LoginActivity extends BasisActivity {
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         mAuth = FirebaseAuth.getInstance();
-
+        setGooglePlusButtonText(signInButton, "Sign in with Google");
 
     }
 
@@ -120,12 +121,14 @@ public class LoginActivity extends BasisActivity {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 // Google Sign In was successful, authenticate with Firebase
+                Log.d("LoginActivity","s1");
                 GoogleSignInAccount account = task.getResult(ApiException.class);
+                Log.d("LoginActivity","s1");
                 firebaseAuthWithGoogle(account);
                 Log.d("LoginActivity","s1");
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
-                Log.d("LoginActivity","f1");
+                Log.d("LoginActivity","f2");
                 // [START_EXCLUDE]
 
                 // [END_EXCLUDE]
@@ -164,7 +167,18 @@ public class LoginActivity extends BasisActivity {
     }
     // [END auth_with_google]
 
+    protected void setGooglePlusButtonText(SignInButton signInButton, String buttonText) {
+        // Find the TextView that is inside of the SignInButton and set its text
+        for (int i = 0; i < signInButton.getChildCount(); i++) {
+            View v = signInButton.getChildAt(i);
 
+            if (v instanceof TextView) {
+                TextView tv = (TextView) v;
+                tv.setText(buttonText);
+                return;
+            }
+        }
+    }
 
 
     private void startToast(String msg) {

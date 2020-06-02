@@ -3,8 +3,11 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,21 +26,23 @@ import java.util.List;
 public class FeedActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
-
     private List<PostInfo> imageDTOs = new ArrayList<>();
     private FirebaseDatabase database;
-
+    String search;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed);
         database = FirebaseDatabase.getInstance();
-
-
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        GridLayoutManager layoutManager=new GridLayoutManager(this,3);
-        recyclerView.setLayoutManager(layoutManager);
         final BoardRecyclerViewAdapter boardRecyclerViewAdapter = new BoardRecyclerViewAdapter();
+
+        findViewById(R.id.btn_search).setOnClickListener(listener);
+        EditText editText=findViewById(R.id.et_search);
+        search=editText.getText().toString();
+
+        GridLayoutManager layoutManager=new GridLayoutManager(this,3);
+        recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(boardRecyclerViewAdapter);
 
         database.getReference().child("posts").addValueEventListener(new ValueEventListener() {
@@ -61,6 +66,39 @@ public class FeedActivity extends AppCompatActivity {
         });
 
 
+    }
+    View.OnClickListener listener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId())
+            {
+                case R.id.btn_search:
+                    searchLocation(search);
+            }
+        }
+    };
+
+    void searchLocation(String str)
+    {
+        database.getReference().child("posts").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+             imageDTOs.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                PostInfo imageDTO = snapshot.getValue(PostInfo.class);
+                imageDTOs.add(imageDTO);
+            }
+
+
+
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+    }
+    });
     }
     class BoardRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
