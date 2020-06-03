@@ -34,9 +34,10 @@ import com.google.firebase.auth.GoogleAuthProvider;
 public class LoginActivity extends BasisActivity {
     private static final int RC_SIGN_IN = 10;
     private FirebaseAuth mAuth;
-    ProgressDialog Dialog;
     private GoogleSignInClient mGoogleSignInClient;
     SignInButton signInButton;
+    private ProgressBar mProgressBar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,9 +50,14 @@ public class LoginActivity extends BasisActivity {
         findViewById(R.id.resetButton).setOnClickListener(onClickListener);
         signInButton=findViewById(R.id.googlelogin);
         signInButton.setOnClickListener(onClickListener);
+        mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
+
+        mProgressBar.setVisibility(View.GONE);
+
 
         // [START config_signin]
         // Configure Google Sign In
+
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -97,6 +103,8 @@ public class LoginActivity extends BasisActivity {
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
                                 // Sign in success, update UI with the signed-in user's information
+                                mProgressBar.setVisibility(View.VISIBLE);
+
                                 FirebaseUser user = mAuth.getCurrentUser();
                                 startToast("로그인에 성공하였습니다.");
                                 myStartActivity(MainActivity.class);
