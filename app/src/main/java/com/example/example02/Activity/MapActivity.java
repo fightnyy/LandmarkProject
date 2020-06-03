@@ -1,8 +1,8 @@
 package com.example.example02.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 
-import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -34,10 +34,11 @@ public class MapActivity extends AppCompatActivity
         implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
     private static final String TAG = "MapActivity";
-    private GoogleMap mMap;
     private final ArrayList<MapInfo> mapInfo = new ArrayList<>();
     private int checkPositionNum;
+    private GoogleMap mMap;
     private MapFragment MF;
+    private MapFeedFragment MFF;
 
 
     @Override
@@ -97,6 +98,8 @@ public class MapActivity extends AppCompatActivity
     @Override
     public boolean onMarkerClick(Marker marker) {
         Toast.makeText(this, marker.getTitle(), Toast.LENGTH_SHORT).show();
+        FragmentManager fm = getSupportFragmentManager();
+        fm.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         MF = new MapFragment();
         for(int idx = 0; idx < mapInfo.size(); idx++){
             if(marker.getTitle().equals(mapInfo.get(idx).getName())){
@@ -106,6 +109,11 @@ public class MapActivity extends AppCompatActivity
         }
         startMapFragment();
         return false;
+    }
+
+    public void startsearchAreaPost(){
+        MFF = new MapFeedFragment();
+        getSupportFragmentManager().beginTransaction().replace(R.id.container02, MFF).commit();
     }
 
 
