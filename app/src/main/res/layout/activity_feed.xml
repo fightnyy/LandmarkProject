@@ -19,6 +19,7 @@
             android:id="@+id/et_search"
             android:layout_width="0dp"
             android:hint="🔍검색"
+            android:maxLines="1"
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"

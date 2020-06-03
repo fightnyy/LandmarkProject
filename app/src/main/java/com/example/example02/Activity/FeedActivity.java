@@ -45,39 +45,62 @@ public class FeedActivity extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         final BoardRecyclerViewAdapter boardRecyclerViewAdapter = new BoardRecyclerViewAdapter();
         editText = findViewById(R.id.et_search);
-        editText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            editText.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-            }
+                }
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String str = editText.getText().toString();
-                database.getReference().child("posts").orderByChild("location").equalTo(str).addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    String str = editText.getText().toString();
+                    if(str.length()!=0){
+                    database.getReference().child("posts").orderByChild("location").equalTo(str).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
 
-                        imageDTOs.clear();
-                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            PostInfo imageDTO = snapshot.getValue(PostInfo.class);
-                            imageDTOs.add(imageDTO);
+                            imageDTOs.clear();
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                PostInfo imageDTO = snapshot.getValue(PostInfo.class);
+                                imageDTOs.add(imageDTO);
+                            }
+                            boardRecyclerViewAdapter.notifyDataSetChanged();
                         }
-                        boardRecyclerViewAdapter.notifyDataSetChanged();
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+                    else
+                    {
+                        database.getReference().child("posts").addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                imageDTOs.clear();
+                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                    PostInfo imageDTO = snapshot.getValue(PostInfo.class);
+                                    imageDTOs.add(imageDTO);
+                                }
+                                boardRecyclerViewAdapter.notifyDataSetChanged();
+
+
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
                     }
+                }
+                @Override
+                public void afterTextChanged(Editable s) {
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                }
+            });
 
-                    }
-                });
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
 
 
         GridLayoutManager layoutManager = new GridLayoutManager(this, 3);
@@ -95,7 +118,6 @@ public class FeedActivity extends AppCompatActivity {
         database.getReference().child("posts").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d("login", "reach1" + dataSnapshot.toString());
                 imageDTOs.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     PostInfo imageDTO = snapshot.getValue(PostInfo.class);
