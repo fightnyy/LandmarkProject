@@ -53,7 +53,7 @@
                 android:textColor="@color/address"
                 android:textColorHint="#758A8D" />
 
-            ¡
+
 
             <EditText
                 android:id="@+id/passwordText"
@@ -108,10 +108,17 @@
                 android:layout_marginTop="10dp"
                 android:text="password reset"
                 android:textSize="18dp" />
-            
+
 
 
         </LinearLayout>
+        <ProgressBar
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/progressBar"
+            android:layout_centerInParent="true"/>
+
+
 
     </RelativeLayout>
 </RelativeLayout>
