@@ -37,11 +37,15 @@ public class FeedFragment extends Fragment {
     private List<PostInfo> result = new ArrayList<>();
     EditText editText;
     ViewGroup rootView;
+
+
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        rootView=(ViewGroup) inflater.inflate(R.layout.activity_feed,container,false);
-
+        rootView=(ViewGroup) inflater.inflate(R.layout.fragment_feed,container,false);
+        final Bundle bundle=new Bundle();
         database = FirebaseDatabase.getInstance();
         final FeedFragment.BoardRecyclerViewAdapter boardRecyclerViewAdapter = new BoardRecyclerViewAdapter();
         editText = rootView.findViewById(R.id.et_search);
@@ -111,7 +115,9 @@ public class FeedFragment extends Fragment {
             @Override
             public void onItemClick(RecyclerView.ViewHolder holder, View view, int position) {
                 PostInfo item=boardRecyclerViewAdapter.getItem(position);
-                Toast.makeText(getContext(),"아이템선택됨"+item.getPhotoUrl(),Toast.LENGTH_LONG).show();
+                FeedActivity activity=(FeedActivity)getActivity();
+                Toast.makeText(getContext(),"클릭됨"+item.getPublisher().toString(),Toast.LENGTH_SHORT).show();
+                activity.DetailFeed(item.getPublisher());
             }
         });
 
@@ -148,7 +154,7 @@ public class FeedFragment extends Fragment {
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_list, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_feed_list, parent, false);
 
             return new CustomViewHolder(view,listener);
         }
