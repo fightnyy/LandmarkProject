@@ -16,21 +16,21 @@
 
 
             <ImageView
+                android:id="@+id/profileImage"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:layout_marginEnd="7dp"
-                android:layout_marginStart="15dp"
                 android:layout_centerVertical="true"
-                android:id="@+id/profileImage"
-                android:src="@drawable/ic_person_outline_black_24dp"/>
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="7dp"
+                android:src="@drawable/ic_person_outline_black_24dp" />
 
             <TextView
                 android:id="@+id/userName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@+id/profileImage"
                 android:layout_centerVertical="true"
                 android:layout_margin="15dp"
+                android:layout_toRightOf="@+id/profileImage"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/black"
                 android:textSize="19dp" />
@@ -61,6 +61,21 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textSize="15dp" />
 
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/relLayout03"
+            android:layout_margin="8dp">
+
+            <TextView
+                android:id ="@+id/commend"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/commend_radius"
+                android:hint="   commend..."
+                android:textSize="18dp"/>
         </RelativeLayout>
 
     </RelativeLayout>

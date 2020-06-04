@@ -1,6 +1,5 @@
 package com.example.example02.Fragment;
 
-import android.content.Context;
 import android.os.Bundle;
 
 import androidx.fragment.app.ListFragment;
@@ -12,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
-import com.example.example02.Activity.MainActivity;
 import com.example.example02.Activity.WritingActivity;
 import com.example.example02.Adapter.LocationAdapter;
 import com.example.example02.R;

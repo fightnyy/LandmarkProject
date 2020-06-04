@@ -49,9 +49,6 @@ public class MapFeedFragment extends Fragment {
     private MapInfo map;
     private TextView areaName;
 
-    private String Name;
-    private String Url;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -129,25 +126,25 @@ public class MapFeedFragment extends Fragment {
             final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
             DocumentReference docRef = db.collection("users").document(result.get(position).getPublisher());
-            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if (task.isSuccessful()) {
-                        DocumentSnapshot document = task.getResult();
-                        if (document != null) {
-                            if (document.exists()) {
-                                String photoUrl = document.getData().get("photoUrl").toString();
-                                if(photoUrl != null)
-                                    GlideApp.with(holder.itemView.getContext()).asBitmap().load(photoUrl).apply(new RequestOptions().circleCrop()).
-                                            into(((MapFeedFragment.MapPostAdapter.CustomViewHolder)holder).userImage);
-                                ((MapFeedFragment.MapPostAdapter.CustomViewHolder)holder).userName.setText(document.getData().get("name").toString());
+                    docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                if (document != null) {
+                                    if (document.exists()) {
+                                        String photoUrl = document.getData().get("photoUrl").toString();
+                                        if(photoUrl != null)
+                                            GlideApp.with(holder.itemView.getContext()).asBitmap().load(photoUrl).apply(new RequestOptions().circleCrop()).
+                                                    into(((MapFeedFragment.MapPostAdapter.CustomViewHolder)holder).userImage);
+                                        ((MapFeedFragment.MapPostAdapter.CustomViewHolder)holder).userName.setText(document.getData().get("name").toString());
+                                    } else {
+                                        Log.d(TAG, "No such document");
+                                    }
+                                }
                             } else {
-                                Log.d(TAG, "No such document");
+                                Log.d(TAG, "get failed with ", task.getException());
                             }
-                        }
-                    } else {
-                        Log.d(TAG, "get failed with ", task.getException());
-                    }
                 }
             });
 

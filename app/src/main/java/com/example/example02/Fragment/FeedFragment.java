@@ -153,6 +153,7 @@ public class FeedFragment extends Fragment {
             return new CustomViewHolder(view,listener);
         }
 
+
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
             Glide.with(holder.itemView.getContext()).load(imageDTOs.get(position).getPhotoUrl()).into(((BoardRecyclerViewAdapter.CustomViewHolder) holder).imageView);
