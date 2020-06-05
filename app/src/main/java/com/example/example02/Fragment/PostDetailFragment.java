@@ -1,5 +1,7 @@
-package com.example.example02.Activity;
+package com.example.example02.Fragment;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -13,26 +15,34 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.request.RequestOptions;
-import com.example.example02.Fragment.MapFeedFragment;
+import com.example.example02.Activity.ProfileActivity;
 import com.example.example02.GlideApp;
 import com.example.example02.Info.PostInfo;
 import com.example.example02.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class PostDetailFragment extends Fragment {
     private static final String TAG = "ProfileFragmentDetail";
+    private FirebaseFirestore db;
     private PostInfo item;
 
     private TextView userName;
     private TextView userText;
     private ImageView userImage;
     private ImageView Image;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +55,7 @@ public class PostDetailFragment extends Fragment {
         final View view = inflater.inflate(R.layout.fragment_post_detail, null);
 
         view.findViewById(R.id.backButton).setOnClickListener(onClickListener);
+        view.findViewById(R.id.removeButton).setOnClickListener(onClickListener);
         userName = (TextView) view.findViewById(R.id.userName);
         userText = (TextView) view.findViewById(R.id.description_text);
         userImage = (ImageView) view.findViewById(R.id.profileImage);
@@ -52,7 +63,7 @@ public class PostDetailFragment extends Fragment {
 
         item = ((ProfileActivity) getActivity()).getPostInfo();
 
-        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db = FirebaseFirestore.getInstance();
         GlideApp.with(getActivity()).asBitmap().load(item.getPhotoUrl()).into(Image);
         userText.setText(item.getPostText());
 
@@ -65,7 +76,7 @@ public class PostDetailFragment extends Fragment {
                     if (document != null) {
                         if (document.exists()) {
                             String photoUrl = document.getData().get("photoUrl").toString();
-                            if(photoUrl != null)
+                            if (photoUrl != null)
                                 GlideApp.with(getActivity()).asBitmap().load(photoUrl).apply(new RequestOptions().circleCrop()).into(userImage);
                             userName.setText(document.getData().get("name").toString());
                         } else {
@@ -80,6 +91,7 @@ public class PostDetailFragment extends Fragment {
 
         return view;
     }
+
     View.OnClickListener onClickListener = new View.OnClickListener() {
         public void onClick(View v) {
             switch (v.getId()) {
@@ -88,7 +100,39 @@ public class PostDetailFragment extends Fragment {
                     fragmentManager.beginTransaction().remove(PostDetailFragment.this).commit();
                     fragmentManager.popBackStack();
                     break;
+                case R.id.removeButton:
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setTitle("삭제");
+                    builder.setMessage("정말 게시글을 삭제하시겠습니까?");
+                    builder.setPositiveButton("예", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            deleteCotent();
+                            startToast("게시글을 삭제하였습니다.");
+                            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                            fragmentManager.beginTransaction().remove(PostDetailFragment.this).commit();
+                            fragmentManager.popBackStack();
+                        }
+                    });
+                    builder.setNegativeButton("아니오", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                    break;
             }
         }
     };
+
+    private void deleteCotent() {
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+        database.child("posts").child(item.getKey()).removeValue();
+    }
+
+    public void startToast(String msg) {
+        Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+    }
 }

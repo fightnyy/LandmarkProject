@@ -1,6 +1,5 @@
-package com.example.example02.Activity;
+package com.example.example02.Fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -8,7 +7,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +17,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.example02.Activity.ProfileActivity;
 import com.example.example02.GlideApp;
 import com.example.example02.Info.PostInfo;
 import com.example.example02.OnFeedItemClickListener;

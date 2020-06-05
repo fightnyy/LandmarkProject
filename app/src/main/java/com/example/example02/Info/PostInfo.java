@@ -13,27 +13,30 @@ public class PostInfo {
     private String publisher;
     private String location;
     private String area;
+    private String key;
     @ServerTimestamp
     private Date createdAt;
 
     public PostInfo(){
         // Default constructor required for calls to DataSnapshot.getValue(Post.class)
     }
-    public PostInfo(String postText, String photoUrl, String publisher, String location, String area) {
+    public PostInfo(String postText, String photoUrl, String publisher, String location, String area, String Key) {
         this.postText = postText;
         this.photoUrl = photoUrl;
         this.publisher = publisher;
         this.location = location;
         this.area = area;
+        this.key = key;
     }
 
-    public PostInfo(String postText, String photoUrl, String publisher, String location, String area, Date createdAt) {
+    public PostInfo(String postText, String photoUrl, String publisher, String location, String area, Date createdAt, String key) {
         this.postText = postText;
         this.photoUrl = photoUrl;
         this.publisher = publisher;
         this.location = location;
         this.area = area;
         this.createdAt = createdAt;
+        this.key = key;
     }
 
     public String getPhotoUrl(){
@@ -42,6 +45,7 @@ public class PostInfo {
     public String getPostText() { return this.postText; }
     public String getArea() { return this.area; }
     public String getPublisher() { return this.publisher; }
+    public String getKey() {return this.key;}
 
     @Exclude
     public Map<String, Object> toMap() {
@@ -52,6 +56,7 @@ public class PostInfo {
         result.put("location", location);
         result.put("area", area);
         result.put("createdAt", createdAt);
+        result.put("key", key);
         return result;
     }
 }
