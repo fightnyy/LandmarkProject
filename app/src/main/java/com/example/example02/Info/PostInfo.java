@@ -41,6 +41,7 @@ public class PostInfo {
     }
     public String getPostText() { return this.postText; }
     public String getArea() { return this.area; }
+    public String getPublisher() { return this.publisher; }
 
     @Exclude
     public Map<String, Object> toMap() {

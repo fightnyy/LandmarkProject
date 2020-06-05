@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.example02.Fragment.MapFeedFragment;
 import com.example.example02.Fragment.MapFragment;
 import com.example.example02.Info.MapInfo;
 import com.example.example02.R;
