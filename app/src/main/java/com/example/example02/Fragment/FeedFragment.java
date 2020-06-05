@@ -29,7 +29,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FeedFragment extends Fragment {
+public class FeedFragment extends Fragment implements OnFeedItemClickListener {
 
     private RecyclerView recyclerView;
     private List<PostInfo> imageDTOs = new ArrayList<>();
@@ -141,6 +141,11 @@ public class FeedFragment extends Fragment {
         });
 
         return rootView;
+    }
+
+    @Override
+    public void onItemClick(RecyclerView.ViewHolder holder, View view, int position) {
+
     }
 
     class BoardRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements OnFeedItemClickListener {

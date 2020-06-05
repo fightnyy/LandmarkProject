@@ -13,14 +13,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.example.example02.Activity.FeedActivity;
 import com.example.example02.GlideApp;
 import com.example.example02.Info.PostInfo;
 import com.example.example02.R;
@@ -46,42 +44,43 @@ public class DetailFeedFragment extends Fragment {
     final FirebaseFirestore db = FirebaseFirestore.getInstance();
     ViewGroup rootView;
     String photoUrl;
-    Button btn;
+    final DetailFeedFragment.BoardRecyclerViewAdapter boardRecyclerViewAdapter = new BoardRecyclerViewAdapter();
 
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        database = FirebaseDatabase.getInstance();
+//        database = FirebaseDatabase.getInstance();
         rootView = (ViewGroup) inflater.inflate(R.layout.fragment_detail_feed, container, false);
 
 
-        if (getArguments() != null) {
-            userName = getArguments().getString("userId");
-            Log.d("Detailname", userName);
-        }
+//        if (getArguments() != null) {
+//            userName = getArguments().getString("userId");
+//
+//        }
+//
 
 
 
 
-        rootView.findViewById(R.id.btn_temp).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FeedActivity feedActivity=(FeedActivity) getActivity();
-                feedActivity.DetailFeed("kgn");
-            }
-        });
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView = rootView.findViewById(R.id.detail_recyclerView);
-        final DetailFeedFragment.BoardRecyclerViewAdapter boardRecyclerViewAdapter = new BoardRecyclerViewAdapter();
+
         recyclerView.setAdapter(boardRecyclerViewAdapter);
 
         recyclerView.setLayoutManager(layoutManager);
+
+
+
+
+        return rootView;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+
+
+
 
 
         database.getReference().child("posts").orderByChild("publisher").equalTo(userName).addValueEventListener(new ValueEventListener() {
@@ -102,9 +101,7 @@ public class DetailFeedFragment extends Fragment {
         });
 
 
-        return rootView;
     }
-
 
     class BoardRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -123,7 +120,7 @@ public class DetailFeedFragment extends Fragment {
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
             Glide.with(holder.itemView.getContext()).load(imageDTOs.get(position).getPhotoUrl()).into(((DetailFeedFragment.BoardRecyclerViewAdapter.CustomViewHolder) holder).post_Image);
-//            Glide.with(holder.itemView.getContext()).load(photoUrl).into(((DetailFeedFragment.BoardRecyclerViewAdapter.CustomViewHolder) holder).profile_photo);
+            Glide.with(holder.itemView.getContext()).load(photoUrl).into(((DetailFeedFragment.BoardRecyclerViewAdapter.CustomViewHolder) holder).profile_photo);
             ((DetailFeedFragment.BoardRecyclerViewAdapter.CustomViewHolder) holder).userId.setText(userName);
 
         }

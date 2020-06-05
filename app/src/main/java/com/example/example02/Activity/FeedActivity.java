@@ -20,7 +20,7 @@ public class FeedActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.rootfeed);
-        feedFragment = (FeedFragment) getSupportFragmentManager().findFragmentById(R.id.feedfrag);
+        feedFragment = (FeedFragment)getSupportFragmentManager().findFragmentById(R.id.feedfrag);
         detailFeedFragment = new DetailFeedFragment();
         bundle = new Bundle();
 
@@ -28,8 +28,8 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     public void DetailFeed(String username) {
-        bundle.putString("username", username);
-        Log.d("hello",username);
-        getSupportFragmentManager().beginTransaction().replace(R.id.FeedContainer, detailFeedFragment).commit();
+
+        bundle.putString("username",username);
+        getSupportFragmentManager().beginTransaction().add(R.id.FeedContainer,detailFeedFragment).commit();
     }
 }
