@@ -1,5 +1,6 @@
 package com.example.example02.Fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -47,42 +48,13 @@ public class DetailFeedFragment extends Fragment {
     final DetailFeedFragment.BoardRecyclerViewAdapter boardRecyclerViewAdapter = new BoardRecyclerViewAdapter();
 
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-//        database = FirebaseDatabase.getInstance();
-        rootView = (ViewGroup) inflater.inflate(R.layout.fragment_detail_feed, container, false);
 
 
-//        if (getArguments() != null) {
-//            userName = getArguments().getString("userId");
-//
-//        }
-//
-
-
-
-
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-        recyclerView = rootView.findViewById(R.id.detail_recyclerView);
-
-        recyclerView.setAdapter(boardRecyclerViewAdapter);
-
-        recyclerView.setLayoutManager(layoutManager);
-
-
-
-
-        return rootView;
-    }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-
-
-
-
-
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        database = FirebaseDatabase.getInstance();
         database.getReference().child("posts").orderByChild("publisher").equalTo(userName).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -99,8 +71,28 @@ public class DetailFeedFragment extends Fragment {
 
             }
         });
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
 
+        rootView = (ViewGroup) inflater.inflate(R.layout.fragment_detail_feed, container, false);
+        if (getArguments() != null) {
+            userName = getArguments().getString("userId");
+        }
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        recyclerView = rootView.findViewById(R.id.detail_recyclerView);
+        recyclerView.setAdapter(boardRecyclerViewAdapter);
+        recyclerView.setLayoutManager(layoutManager);
+
+        return rootView;
     }
 
     class BoardRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

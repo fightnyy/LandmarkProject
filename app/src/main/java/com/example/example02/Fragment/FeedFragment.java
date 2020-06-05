@@ -29,7 +29,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FeedFragment extends Fragment implements OnFeedItemClickListener {
+public class FeedFragment extends Fragment  {
 
     private RecyclerView recyclerView;
     private List<PostInfo> imageDTOs = new ArrayList<>();
@@ -116,7 +116,7 @@ public class FeedFragment extends Fragment implements OnFeedItemClickListener {
             public void onItemClick(RecyclerView.ViewHolder holder, View view, int position) {
                 PostInfo item=boardRecyclerViewAdapter.getItem(position);
                 FeedActivity activity=(FeedActivity)getActivity();
-                Toast.makeText(getContext(),"클릭됨"+item.getPublisher().toString(),Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(),item.getPublisher().toString(),Toast.LENGTH_SHORT).show();
                 activity.DetailFeed(item.getPublisher());
             }
         });
@@ -143,10 +143,7 @@ public class FeedFragment extends Fragment implements OnFeedItemClickListener {
         return rootView;
     }
 
-    @Override
-    public void onItemClick(RecyclerView.ViewHolder holder, View view, int position) {
 
-    }
 
     class BoardRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements OnFeedItemClickListener {
         OnFeedItemClickListener listener;
