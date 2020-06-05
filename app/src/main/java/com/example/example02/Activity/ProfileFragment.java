@@ -103,7 +103,6 @@ public class ProfileFragment extends Fragment {
                 PostInfo item = boardRecyclerViewAdapter.getItem(position);
                 ((ProfileActivity) getActivity()).SetPostInfo(boardRecyclerViewAdapter.getItem(position));
                 ((ProfileActivity) getActivity()).startPostDetail();
-                startToast("아이템선택됨"+item.getPhotoUrl());
             }
         });
 

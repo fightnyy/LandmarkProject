@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.example02.Activity.FeedActivity;
+import com.example.example02.Activity.ProfileActivity;
 import com.example.example02.Info.PostInfo;
 import com.example.example02.OnFeedItemClickListener;
 import com.example.example02.R;
@@ -115,9 +116,8 @@ public class FeedFragment extends Fragment  {
             @Override
             public void onItemClick(RecyclerView.ViewHolder holder, View view, int position) {
                 PostInfo item=boardRecyclerViewAdapter.getItem(position);
-                FeedActivity activity=(FeedActivity)getActivity();
-                Toast.makeText(getContext(),item.getPublisher().toString(),Toast.LENGTH_SHORT).show();
-                activity.DetailFeed(item.getPublisher());
+               ((FeedActivity)getActivity()).DetailFeed(item.getPublisher());
+
             }
         });
 
