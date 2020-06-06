@@ -45,7 +45,9 @@ public class PostInfo {
     public String getPostText() { return this.postText; }
     public String getArea() { return this.area; }
     public String getPublisher() { return this.publisher; }
+
     public String getKey() {return this.key;}
+
 
     @Exclude
     public Map<String, Object> toMap() {
@@ -68,7 +70,10 @@ public class PostInfo {
         this.photoUrl = photoUrl;
     }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 9308cf1262cd46175304156e64df3c8b92684929
     public void setPublisher(String publisher) {
         this.publisher = publisher;
     }
