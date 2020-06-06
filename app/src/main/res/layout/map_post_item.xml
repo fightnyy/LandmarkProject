@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -14,20 +14,33 @@
             android:layout_height="wrap_content"
             android:background="@drawable/white_grey_border_bottom">
 
+
+            <ImageView
+                android:id="@+id/profileImage"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="7dp"
+                android:src="@drawable/ic_person_outline_black_24dp" />
+
             <TextView
-                android:id="@+id/username"
+                android:id="@+id/userName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
                 android:layout_margin="15dp"
+                android:layout_toRightOf="@+id/profileImage"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/black"
-                android:textSize="23dp" />
+                android:textSize="19dp" />
+
         </RelativeLayout>
 
         <ImageView
             android:id="@+id/postImage"
             android:layout_width="match_parent"
-            android:layout_height="350dp"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/relLayout"
             android:layout_centerHorizontal="true" />
 
@@ -48,6 +61,21 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textSize="15dp" />
 
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/relLayout03"
+            android:layout_margin="8dp">
+
+            <TextView
+                android:id ="@+id/commend"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/commend_radius"
+                android:hint="   commend..."
+                android:textSize="18dp"/>
         </RelativeLayout>
 
     </RelativeLayout>

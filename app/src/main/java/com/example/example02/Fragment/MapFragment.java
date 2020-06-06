@@ -41,6 +41,7 @@ public class MapFragment extends Fragment {
 
         area.setText(map.getName());
         explain.setText(map.getExplain());
+        view.findViewById(R.id.backButton).setOnClickListener(onClickListener);
         view.findViewById(R.id.searchAreaPost).setOnClickListener(onClickListener);
         return view;
     }
@@ -50,6 +51,11 @@ public class MapFragment extends Fragment {
             switch (v.getId()) {
                 case R.id.searchAreaPost:
                     ((MapActivity)getActivity()).startsearchAreaPost();
+                    break;
+                case R.id.backButton:
+                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                    fragmentManager.beginTransaction().remove(MapFragment.this).commit();
+                    fragmentManager.popBackStack();
                     break;
             }
         }
