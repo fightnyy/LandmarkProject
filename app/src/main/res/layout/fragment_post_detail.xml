@@ -69,6 +69,23 @@
                             android:layout_marginEnd="20dp"
                             android:src="@drawable/backspace_black" />
 
+                        <ImageView
+                            android:id="@+id/changeButton"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginEnd="100dp"
+                            android:src="@drawable/baseline_create_black" />
+
+                        <ImageView
+                            android:id="@+id/finishButton"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginEnd="140dp" />
+
 
                     </RelativeLayout>
 
@@ -86,6 +103,17 @@
                         android:layout_below="@+id/postImage"
                         android:background="@drawable/white_grey_border_bottom">
 
+                        <EditText
+                            android:id="@+id/edit_description_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="16dp"
+                            android:layout_marginTop="14dp"
+                            android:ellipsize="end"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:textSize="15dp"
+                            android:visibility="gone"/>
+
                         <TextView
                             android:id="@+id/description_text"
                             android:layout_width="match_parent"
@@ -102,19 +130,36 @@
                     <RelativeLayout
                         android:id="@+id/relLayout04"
                         android:layout_width="match_parent"
-                        android:layout_height="40dp"
+                        android:layout_height="match_parent"
                         android:layout_below="@+id/relLayout03"
                         android:background="@drawable/white_grey_border_bottom">
 
-                        <TextView
-                            android:id="@+id/commend"
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/recyclerView"
                             android:layout_width="match_parent"
+                            android:layout_height="match_parent"/>
+
+                        <EditText
+                            android:id="@+id/commend"
+                            android:layout_width="350dp"
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
                             android:layout_margin="10dp"
+                            android:layout_below="@+id/recyclerView"
                             android:background="@drawable/commend_radius"
                             android:hint="   commend..."
                             android:textSize="18dp" />
+
+                        <ImageView
+                            android:id="@+id/sendCommend"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_centerVertical="true"
+                            android:layout_below="@+id/recyclerView"
+                            android:layout_toRightOf="@+id/commend"
+                            android:layout_margin="7dp"
+                            android:src="@drawable/baseline_send_black" />
+
 
                     </RelativeLayout>
 

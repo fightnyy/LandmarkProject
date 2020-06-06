@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -44,11 +45,6 @@ public class ProfileFragment extends Fragment {
 
     private List<PostInfo> imageDTOs = new ArrayList<>();
     private List<PostInfo> result = new ArrayList<>();
-
-    public static ProfileFragment newInstance(String param1, String param2) {
-        ProfileFragment fragment = new ProfileFragment();
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -143,6 +139,12 @@ public class ProfileFragment extends Fragment {
             }
         }
     };
+
+    public void breakProfileFragment(){
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        fragmentManager.beginTransaction().remove(ProfileFragment.this).commit();
+        fragmentManager.popBackStack();
+    }
 
     private void startToast(String msg) {
         Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();

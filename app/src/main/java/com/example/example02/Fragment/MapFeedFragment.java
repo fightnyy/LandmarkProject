@@ -88,7 +88,7 @@ public class MapFeedFragment extends Fragment {
                     Log.d(TAG, imageDTOs.get(i).getPhotoUrl());
                 }
                 mapPostAdapter.notifyDataSetChanged();
-            }
+        }
             @Override
             public void onCancelled(DatabaseError databaseError) {
             }
@@ -148,10 +148,10 @@ public class MapFeedFragment extends Fragment {
                 }
             });
 
-            if(result.get(position).getPostText() == null)
-                ((MapFeedFragment.MapPostAdapter.CustomViewHolder)holder).description_text.setText("   ");
-            else
+            if(result.get(position).getPostText() != null)
                 ((MapFeedFragment.MapPostAdapter.CustomViewHolder)holder).description_text.setText(result.get(position).getPostText());
+
+
         }
 
         @Override
