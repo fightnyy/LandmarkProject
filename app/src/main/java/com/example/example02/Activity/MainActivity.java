@@ -45,11 +45,9 @@ public class MainActivity extends BasisActivity {
                     FirebaseAuth.getInstance().signOut();
                     startLoginActivity();
                     break;
-
                 case R.id.CameraButton:
                     startCameraActivity();
                     break;
-
                 case R.id.ProfileButton:
                     startProfileActivity();
                     break;
@@ -93,7 +91,9 @@ public class MainActivity extends BasisActivity {
     }
 
     private void startProfileActivity() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         Intent intent = new Intent(this, ProfileActivity.class);
+        intent.putExtra("user", user.getUid());
         startActivity(intent);
     }
 

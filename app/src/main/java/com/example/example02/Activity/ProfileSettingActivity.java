@@ -21,6 +21,8 @@ import androidx.annotation.NonNull;
 
 import com.bumptech.glide.request.RequestOptions;
 import com.example.example02.GlideApp;
+import com.example.example02.Info.FollowInfo;
+import com.example.example02.Info.PostInfo;
 import com.example.example02.Info.ProfileInfo;
 import com.example.example02.R;
 import com.google.android.gms.tasks.Continuation;
@@ -30,6 +32,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -41,7 +45,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public class ProfileSettingActivity extends BasisActivity {
     private static final String TAG = "ProfileSettingActivity";
@@ -191,6 +197,7 @@ public class ProfileSettingActivity extends BasisActivity {
                     break;
                 case R.id.ProfileImageSetting:
                     startSettingProfileImage();
+                    break;
             }
         }
     };
@@ -224,6 +231,12 @@ public class ProfileSettingActivity extends BasisActivity {
                         public void onComplete(@NonNull Task<Uri> task) {
                             if (task.isSuccessful()) {
                                 Uri downloadUri = task.getResult();
+                                final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("follow");
+
+                                FollowInfo followInfo = new FollowInfo(user.getUid());
+                                Map<String, Object> postValues = followInfo.toMap();
+
+                                databaseReference.child(user.getUid()).setValue(postValues);
 
                                 ProfileInfo profileinfo = new ProfileInfo(name, address, downloadUri.toString());
                                 storeUploader(profileinfo);

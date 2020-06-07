@@ -1,5 +1,6 @@
 package com.example.example02.Fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -15,10 +16,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.example02.Activity.MapActivity;
+import com.example.example02.Activity.ProfileActivity;
 import com.example.example02.GlideApp;
 import com.example.example02.Info.MapInfo;
 import com.example.example02.Info.PostInfo;
@@ -110,6 +113,10 @@ public class MapFeedFragment extends Fragment {
         }
     };
 
+    private void startToast(String msg) {
+        Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+    }
+
     class MapPostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         @Override
@@ -124,6 +131,24 @@ public class MapFeedFragment extends Fragment {
                     into(((MapFeedFragment.MapPostAdapter.CustomViewHolder)holder).imageView);
 
             final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+            ((MapFeedFragment.MapPostAdapter.CustomViewHolder)holder).userImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getContext(), ProfileActivity.class);
+                    intent.putExtra("user", result.get(position).getPublisher());
+                    startActivity(intent);
+                }
+            });
+
+            ((MapFeedFragment.MapPostAdapter.CustomViewHolder)holder).userName.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getContext(), ProfileActivity.class);
+                    intent.putExtra("user", result.get(position).getPublisher());
+                    startActivity(intent);
+                }
+            });
 
             DocumentReference docRef = db.collection("users").document(result.get(position).getPublisher());
                     docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {

@@ -15,6 +15,8 @@ public class ProfileActivity extends BasisActivity {
 
     private PostInfo item;
 
+    private String userUid;
+
     private PostDetailFragment PDF;
     private ProfileFragment PF;
 
@@ -23,12 +25,17 @@ public class ProfileActivity extends BasisActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
+        Intent intent = getIntent();
+        userUid = intent.getExtras().getString("user");
         startProfileFragment();
     }
 
     public void startProfileFragment(){
         PF = new ProfileFragment();
         getSupportFragmentManager().beginTransaction().replace(R.id.container, PF).commit();
+        Bundle bundle = new Bundle();
+        bundle.putString("user", userUid);
+        PF.setArguments(bundle);
     }
 
     public void startPostDetail(){
@@ -46,6 +53,10 @@ public class ProfileActivity extends BasisActivity {
 
     private void startToast(String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    }
+
+    public void FinishActiviy(){
+        finish();
     }
 
     public void profileSetting() {

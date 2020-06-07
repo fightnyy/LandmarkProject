@@ -57,7 +57,6 @@ public class PostDetailFragment extends Fragment {
     private AlertDialog dialog;
 
     private RecyclerView recyclerView;
-    private static BoardRecyclerViewAdapter boardRecyclerViewAdapter;
 
     private TextView userName;
     private TextView userText;
