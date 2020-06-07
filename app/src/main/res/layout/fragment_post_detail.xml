@@ -103,6 +103,7 @@
                         android:layout_below="@+id/postImage"
                         android:background="@drawable/white_grey_border_bottom">
 
+
                         <EditText
                             android:id="@+id/edit_description_text"
                             android:layout_width="match_parent"
@@ -112,19 +113,31 @@
                             android:ellipsize="end"
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             android:textSize="15dp"
-                            android:visibility="gone"/>
+                            android:visibility="gone" />
 
                         <TextView
                             android:id="@+id/description_text"
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="16dp"
                             android:layout_marginTop="14dp"
                             android:ellipsize="end"
+                            android:layout_toRightOf="@id/Like"
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             android:textSize="15dp" />
 
-
+                        <ImageView
+                            android:layout_centerVertical="true"
+                            android:id="@+id/Like"
+                            android:layout_margin="5dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/favorite_border"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/LikeNum"
+                            android:layout_below="@id/Like"/>
                     </RelativeLayout>
 
                     <RelativeLayout
@@ -137,15 +150,15 @@
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/recyclerView"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"/>
+                            android:layout_height="match_parent" />
 
                         <EditText
                             android:id="@+id/commend"
                             android:layout_width="350dp"
                             android:layout_height="wrap_content"
+                            android:layout_below="@+id/recyclerView"
                             android:layout_centerVertical="true"
                             android:layout_margin="10dp"
-                            android:layout_below="@+id/recyclerView"
                             android:background="@drawable/commend_radius"
                             android:hint="   commend..."
                             android:textSize="18dp" />
@@ -154,10 +167,10 @@
                             android:id="@+id/sendCommend"
                             android:layout_width="30dp"
                             android:layout_height="30dp"
-                            android:layout_centerVertical="true"
                             android:layout_below="@+id/recyclerView"
-                            android:layout_toRightOf="@+id/commend"
+                            android:layout_centerVertical="true"
                             android:layout_margin="7dp"
+                            android:layout_toRightOf="@+id/commend"
                             android:src="@drawable/baseline_send_black" />
 
 

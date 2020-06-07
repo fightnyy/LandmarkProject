@@ -91,7 +91,14 @@ public class PostDetailFragment extends Fragment {
         Image = (ImageView) view.findViewById(R.id.postImage);
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
 
-        item = ((ProfileActivity) getActivity()).getPostInfo();
+        try {
+            item = ((ProfileActivity) getActivity()).getPostInfo();
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            Log.d("hello123","oaidgjoadgij");
+        }
+        Log.d("qwerty","abcde"+getActivity().toString());
 
         db = FirebaseFirestore.getInstance();
         databaseReference = FirebaseDatabase.getInstance().getReference("posts");

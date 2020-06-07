@@ -28,7 +28,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -41,26 +44,36 @@ import java.util.List;
 public class DetailFeedFragment extends Fragment {
     private RecyclerView recyclerView;
     private List<PostInfo> imageDTOs = new ArrayList<>();
+    private List<String> uidlist = new ArrayList<>();
     private FirebaseDatabase database;
     private String userID;
-    final FirebaseFirestore db = FirebaseFirestore.getInstance();
     ViewGroup rootView;
-    String photoUrl;
+    FirebaseAuth auth;
     final DetailFeedFragment.BoardRecyclerViewAdapter boardRecyclerViewAdapter = new BoardRecyclerViewAdapter();
-    Bundle bundle;
-    String str;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-
+        auth = FirebaseAuth.getInstance();
         rootView = (ViewGroup) inflater.inflate(R.layout.fragment_detail_feed, container, false);
         if (getArguments() != null) {
             userID = getArguments().getString("username");
-
         }
         database = FirebaseDatabase.getInstance();
+        database.getReference().child("posts").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                uidlist.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String uidkey = snapshot.getKey();
+                    uidlist.add(uidkey);
+                    Log.d("hello123",uidkey);
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
         database.getReference().child("posts").orderByChild("publisher").equalTo(userID).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -74,37 +87,46 @@ public class DetailFeedFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
             }
         });
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView = rootView.findViewById(R.id.detail_recyclerView);
         recyclerView.setAdapter(boardRecyclerViewAdapter);
         recyclerView.setLayoutManager(layoutManager);
-
         return rootView;
     }
-
     class BoardRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
-
         public PostInfo getItem(int position) {
             return imageDTOs.get(position);
         }
-
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_post_detail, parent, false);
             return new CustomViewHolder(view);
         }
-
         @Override
-        public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
-            Glide.with(holder.itemView.getContext()).load(imageDTOs.get(position).getPhotoUrl()).into(((DetailFeedFragment.BoardRecyclerViewAdapter.CustomViewHolder) holder).postImage);
+        public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
+            Log.d("hello123",position+"");
+            database = FirebaseDatabase.getInstance();
             final FirebaseFirestore db = FirebaseFirestore.getInstance();
-            final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            DocumentReference docRef = db.collection("users").document(user.getUid());
+            Glide.with(holder.itemView.getContext()).load(imageDTOs.get(position).getPhotoUrl()).into(((CustomViewHolder) holder).postImage);
+            ((CustomViewHolder) holder).description_text.setText(imageDTOs.get(position).getPostText());
+            ((CustomViewHolder) holder).Like.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v){
+                    onLikeClicked(database.getReference().child("posts").child(uidlist.get(2)));
+                }
+            });
+            if (imageDTOs.get(position).stars.containsKey(auth.getCurrentUser().getUid())) {
+                ((CustomViewHolder) holder).Like.setImageResource(R.drawable.favorite);
+            } else {
+                ((CustomViewHolder) holder).Like.setImageResource(R.drawable.favorite_border);
+            }
+            ((CustomViewHolder) holder).LikeNum.setText("좋아요"+imageDTOs.get(position).starCount+"개");
+
+
+
+            DocumentReference docRef = db.collection("users").document(userID);
             docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -114,8 +136,7 @@ public class DetailFeedFragment extends Fragment {
                             if (document.exists()) {
                                 ((CustomViewHolder) holder).userName.setText(document.getData().get("name").toString());
                                 GlideApp.with(getContext()).asBitmap().load(document.getData().get("photoUrl").toString()).apply(new RequestOptions().circleCrop()).into(((CustomViewHolder) holder).profileImage);
-                            }
-                            else {
+                            } else {
 
                             }
                         }
@@ -125,6 +146,32 @@ public class DetailFeedFragment extends Fragment {
                 }
             });
 
+        }
+
+        private void onLikeClicked(DatabaseReference postRef) {
+            postRef.runTransaction(new Transaction.Handler() {
+                @Override
+                public Transaction.Result doTransaction(MutableData mutableData) {
+                    PostInfo p = mutableData.getValue(PostInfo.class);
+                    if (p == null) {
+                        return Transaction.success(mutableData);
+                    }
+                    if (p.stars.containsKey(auth.getCurrentUser().getUid())) {
+                        p.starCount = p.starCount - 1;
+                        p.stars.remove(auth.getCurrentUser().getUid());
+                    } else {
+                        p.starCount = p.starCount + 1;
+                        p.stars.put(auth.getCurrentUser().getUid(), true);
+                    }
+                    mutableData.setValue(p);
+                    return Transaction.success(mutableData);
+                }
+
+                @Override
+                public void onComplete(DatabaseError databaseError, boolean b,
+                                       DataSnapshot dataSnapshot) {
+                }
+            });
         }
 
         @Override
@@ -138,6 +185,8 @@ public class DetailFeedFragment extends Fragment {
             public TextView userName;
             public ImageView postImage;
             public TextView description_text;
+            public ImageView Like;
+            public TextView LikeNum;
 
             public CustomViewHolder(View view) {
                 super(view);
@@ -145,7 +194,8 @@ public class DetailFeedFragment extends Fragment {
                 userName = view.findViewById(R.id.userName);
                 postImage = view.findViewById(R.id.postImage);
                 description_text = view.findViewById(R.id.description_text);
-
+                Like = view.findViewById(R.id.Like);
+                LikeNum=view.findViewById(R.id.LikeNum);
 
             }
         }

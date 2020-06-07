@@ -39,5 +39,6 @@ public class FeedActivity extends AppCompatActivity {
         detailFeedFragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction().replace(R.id.container023,detailFeedFragment).commit();
         Log.d("DetailFeed",username+"abc");
+
     }
 }

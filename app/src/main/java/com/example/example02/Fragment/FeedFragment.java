@@ -34,6 +34,7 @@ public class FeedFragment extends Fragment  {
 
     private RecyclerView recyclerView;
     private List<PostInfo> imageDTOs = new ArrayList<>();
+    public  List<String> uidvalue=new ArrayList<>();
     private FirebaseDatabase database;
     private List<PostInfo> result = new ArrayList<>();
     EditText editText;
