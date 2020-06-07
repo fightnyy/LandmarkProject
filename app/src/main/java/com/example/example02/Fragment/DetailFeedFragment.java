@@ -42,7 +42,7 @@ public class DetailFeedFragment extends Fragment {
     private RecyclerView recyclerView;
     private List<PostInfo> imageDTOs = new ArrayList<>();
     private FirebaseDatabase database;
-    private String userName;
+    private String userID;
     final FirebaseFirestore db = FirebaseFirestore.getInstance();
     ViewGroup rootView;
     String photoUrl;
@@ -57,12 +57,11 @@ public class DetailFeedFragment extends Fragment {
 
         rootView = (ViewGroup) inflater.inflate(R.layout.fragment_detail_feed, container, false);
         if (getArguments() != null) {
-            userName = getArguments().getString("username");
+            userID = getArguments().getString("username");
 
         }
-
         database = FirebaseDatabase.getInstance();
-        database.getReference().child("posts").orderByChild("publisher").equalTo(userName).addValueEventListener(new ValueEventListener() {
+        database.getReference().child("posts").orderByChild("publisher").equalTo(userID).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 imageDTOs.clear();
@@ -103,11 +102,9 @@ public class DetailFeedFragment extends Fragment {
         @Override
         public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
             Glide.with(holder.itemView.getContext()).load(imageDTOs.get(position).getPhotoUrl()).into(((DetailFeedFragment.BoardRecyclerViewAdapter.CustomViewHolder) holder).postImage);
-
             final FirebaseFirestore db = FirebaseFirestore.getInstance();
             final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             DocumentReference docRef = db.collection("users").document(user.getUid());
-
             docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -115,12 +112,10 @@ public class DetailFeedFragment extends Fragment {
                         DocumentSnapshot document = task.getResult();
                         if (document != null) {
                             if (document.exists()) {
-                                ((CustomViewHolder) holder).userName.setText(document.getData().get("id"));
-                                ((DetailFeedFragment.BoardRecyclerViewAdapter.CustomViewHolder) holder).userName.setText();
-                                tv_name.setText(document.getData().get("name").toString());
-                                String photoUrl = document.getData().get("photoUrl").toString();
-                                GlideApp.with(getContext()).asBitmap().load(document.getData().get("photoUrl").toString()).apply(new RequestOptions().circleCrop()).into(ProfileImage);
-                            } else {
+                                ((CustomViewHolder) holder).userName.setText(document.getData().get("name").toString());
+                                GlideApp.with(getContext()).asBitmap().load(document.getData().get("photoUrl").toString()).apply(new RequestOptions().circleCrop()).into(((CustomViewHolder) holder).profileImage);
+                            }
+                            else {
 
                             }
                         }
