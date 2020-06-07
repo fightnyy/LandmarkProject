@@ -70,10 +70,6 @@ public class PostInfo {
         this.photoUrl = photoUrl;
     }
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 9308cf1262cd46175304156e64df3c8b92684929
     public void setPublisher(String publisher) {
         this.publisher = publisher;
     }

@@ -60,36 +60,6 @@ public class DetailFeedFragment extends Fragment {
             userName = getArguments().getString("username");
 
         }
-        final FirebaseFirestore db = FirebaseFirestore.getInstance();
-        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        DocumentReference docRef = db.collection("users").document(user.getUid());
-
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document != null) {
-                        if (document.exists()) {
-                            ImageView ProfileImage = (ImageView) rootView.findViewById(R.id.profile_photo);
-                            TextView tv_name = (TextView) rootView.findViewById(R.id.username);
-                            tv_name.setText(document.getData().get("name").toString());
-                            String photoUrl = document.getData().get("photoUrl").toString();
-                            GlideApp.with(getContext()).asBitmap().load(document.getData().get("photoUrl").toString()).apply(new RequestOptions().circleCrop()).into(ProfileImage);
-                        } else {
-
-                        }
-                    }
-                } else {
-
-                }
-            }
-        });
-
-
-
-
-
 
         database = FirebaseDatabase.getInstance();
         database.getReference().child("posts").orderByChild("publisher").equalTo(userName).addValueEventListener(new ValueEventListener() {
@@ -126,13 +96,39 @@ public class DetailFeedFragment extends Fragment {
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_detail_feed_list, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_post_detail, parent, false);
             return new CustomViewHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-            Glide.with(holder.itemView.getContext()).load(imageDTOs.get(position).getPhotoUrl()).into(((DetailFeedFragment.BoardRecyclerViewAdapter.CustomViewHolder) holder).post_Image);
+        public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
+            Glide.with(holder.itemView.getContext()).load(imageDTOs.get(position).getPhotoUrl()).into(((DetailFeedFragment.BoardRecyclerViewAdapter.CustomViewHolder) holder).postImage);
+
+            final FirebaseFirestore db = FirebaseFirestore.getInstance();
+            final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            DocumentReference docRef = db.collection("users").document(user.getUid());
+
+            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document != null) {
+                            if (document.exists()) {
+                                ((CustomViewHolder) holder).userName.setText(document.getData().get("id"));
+                                ((DetailFeedFragment.BoardRecyclerViewAdapter.CustomViewHolder) holder).userName.setText();
+                                tv_name.setText(document.getData().get("name").toString());
+                                String photoUrl = document.getData().get("photoUrl").toString();
+                                GlideApp.with(getContext()).asBitmap().load(document.getData().get("photoUrl").toString()).apply(new RequestOptions().circleCrop()).into(ProfileImage);
+                            } else {
+
+                            }
+                        }
+                    } else {
+
+                    }
+                }
+            });
 
         }
 
@@ -143,17 +139,17 @@ public class DetailFeedFragment extends Fragment {
 
 
         public class CustomViewHolder extends RecyclerView.ViewHolder {
-            public de.hdodenhof.circleimageview.CircleImageView profile_photo;
-            public com.example.example02.View.SquareImageView post_Image;
-            public TextView userId;
-            public TextView image_time_posted;
+            public ImageView profileImage;
+            public TextView userName;
+            public ImageView postImage;
+            public TextView description_text;
 
             public CustomViewHolder(View view) {
                 super(view);
-                profile_photo = view.findViewById(R.id.profile_photo);
-                post_Image = view.findViewById(R.id.post_image);
-                userId = (TextView) view.findViewById(R.id.username);
-                image_time_posted = view.findViewById(R.id.image_time_posted);
+                profileImage = view.findViewById(R.id.profileImage);
+                userName = view.findViewById(R.id.userName);
+                postImage = view.findViewById(R.id.postImage);
+                description_text = view.findViewById(R.id.description_text);
 
 
             }
