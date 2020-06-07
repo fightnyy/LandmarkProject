@@ -39,15 +39,16 @@ public class PostInfo {
         this.key = key;
     }
 
-    public String getPhotoUrl(){
-        return this.photoUrl;
-    }
+    public String getPhotoUrl(){ return this.photoUrl; }
+    public void setPostText(String postText) { this.postText = postText; }
+
     public String getPostText() { return this.postText; }
+
     public String getArea() { return this.area; }
+
     public String getPublisher() { return this.publisher; }
 
-    public String getKey() {return this.key;}
-
+    public String getKey() { return this.key; }
 
     @Exclude
     public Map<String, Object> toMap() {
@@ -60,37 +61,5 @@ public class PostInfo {
         result.put("createdAt", createdAt);
         result.put("key", key);
         return result;
-    }
-
-    public void setPostText(String postText) {
-        this.postText = postText;
-    }
-
-    public void setPhotoUrl(String photoUrl) {
-        this.photoUrl = photoUrl;
-    }
-
-    public void setPublisher(String publisher) {
-        this.publisher = publisher;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public void setArea(String area) {
-        this.area = area;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
     }
 }

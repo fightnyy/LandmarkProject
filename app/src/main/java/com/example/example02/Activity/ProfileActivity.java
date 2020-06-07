@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
-
 import com.example.example02.Fragment.PostDetailFragment;
 import com.example.example02.Fragment.ProfileFragment;
 import com.example.example02.Info.PostInfo;

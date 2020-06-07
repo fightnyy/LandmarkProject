@@ -76,6 +76,7 @@
                 android:background="@drawable/commend_radius"
                 android:hint="   commend..."
                 android:textSize="18dp"/>
+
         </RelativeLayout>
 
     </RelativeLayout>
