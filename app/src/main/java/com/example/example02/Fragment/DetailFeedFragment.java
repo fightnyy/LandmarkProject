@@ -74,7 +74,7 @@ public class DetailFeedFragment extends Fragment {
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
-        database.getReference().child("posts").orderByChild("publisher").equalTo(userID).addValueEventListener(new ValueEventListener() {
+        database.getReference().child("posts").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 imageDTOs.clear();
@@ -114,7 +114,7 @@ public class DetailFeedFragment extends Fragment {
             ((CustomViewHolder) holder).Like.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v){
-                    onLikeClicked(database.getReference().child("posts").child(uidlist.get(2)));
+                    onLikeClicked(database.getReference().child("posts").child(uidlist.get(position)));
                 }
             });
             if (imageDTOs.get(position).stars.containsKey(auth.getCurrentUser().getUid())) {
