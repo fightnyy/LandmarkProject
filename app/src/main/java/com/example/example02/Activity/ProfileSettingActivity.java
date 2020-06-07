@@ -212,8 +212,7 @@ public class ProfileSettingActivity extends BasisActivity {
             final StorageReference mountainImagesRef = storageRef.child("users/" + user.getUid() + "/profileImage.jpg");
 
             if (imagePath == null) {
-                ProfileInfo profileinfo = new ProfileInfo(name, address, null);
-                storeUploader(profileinfo);
+                startToast("프로필 사진을 입력해주세요.");
             } else {
                 try {
                     InputStream stream = new FileInputStream(new File(imagePath));
@@ -233,7 +232,7 @@ public class ProfileSettingActivity extends BasisActivity {
                                 Uri downloadUri = task.getResult();
                                 final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("follow");
 
-                                FollowInfo followInfo = new FollowInfo(user.getUid());
+                                FollowInfo followInfo = new FollowInfo();
                                 Map<String, Object> postValues = followInfo.toMap();
 
                                 databaseReference.child(user.getUid()).setValue(postValues);

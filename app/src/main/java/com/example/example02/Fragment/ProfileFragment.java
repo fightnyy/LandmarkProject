@@ -152,8 +152,10 @@ public class ProfileFragment extends Fragment {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     FollowInfo followInfo = dataSnapshot.getValue(FollowInfo.class);
-                    followButton.setText(followInfo.followerCount + "");
-                    followingButton.setText(followInfo.followingCount + "");
+                    if(followInfo != null){
+                        followButton.setText(followInfo.followerCount + "");
+                        followingButton.setText(followInfo.followingCount + "");
+                    }
                 }
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
@@ -211,8 +213,10 @@ public class ProfileFragment extends Fragment {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     FollowInfo followInfo = dataSnapshot.getValue(FollowInfo.class);
-                    followButton.setText(followInfo.followerCount + "");
-                    followingButton.setText(followInfo.followingCount + "");
+                    if(followInfo != null){
+                        followButton.setText(followInfo.followerCount + "");
+                        followingButton.setText(followInfo.followingCount + "");
+                    }
                 }
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
