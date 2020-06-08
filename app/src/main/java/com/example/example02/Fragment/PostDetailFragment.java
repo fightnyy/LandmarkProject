@@ -231,6 +231,7 @@ public class PostDetailFragment extends Fragment {
 
                 case R.id.sendCommend:
                     String commend = ((EditText) view.findViewById(R.id.commend)).getText().toString();
+                    ((EditText) view.findViewById(R.id.commend)).setText("");
                     String key = databaseReferenceComment.child("comments").child(item.getKey()).push().getKey();
                     CommentInfo commentInfo = new CommentInfo(commend, user.getUid(), key);
                     Map<String, Object> postValues = commentInfo.toMap();

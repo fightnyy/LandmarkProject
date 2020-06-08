@@ -9,8 +9,14 @@
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
+
+    <!-- location -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
     <application
         android:allowBackup="true"
@@ -21,6 +27,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         android:usesCleartextTraffic="true">
+        <activity android:name=".Activity.RequestActivity"></activity>
         <activity android:name=".Adapter.PostAdapter" />
         <activity android:name=".Activity.FeedActivity" />
 
@@ -47,6 +54,7 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAAh250lv0smyX7XLWp9hu_9po-Luf7LXI" />
+        <service android:name=".View.GpsTracker" />
     </application>
 
 </manifest>
