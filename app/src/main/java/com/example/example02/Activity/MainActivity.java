@@ -4,64 +4,121 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.example02.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends BasisActivity {
+    DrawerLayout drawerLayout;
+    NavigationView navigationView;
+    Toolbar toolbar;
+    Menu menu;
+    TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        textView = findViewById(R.id.textView);
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        navigationView.bringToFront();
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+        setupDrawerContent(navigationView);
+        navigationView.setCheckedItem(R.id.nav_home);
+
+        toolbar.setNavigationIcon(R.drawable.menu);
+
+
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         if (user == null) {
             startLoginActivity();
         }
-        BottomNavigationView bottomNavigationView=findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setOnNavigationItemSelectedListener(onBottomNavigationListener);
-        findViewById(R.id.LocationButton).setOnClickListener(onClickListener);
-        findViewById(R.id.logoutButton).setOnClickListener(onClickListener);
+
+        //BottomNavigationView bottomNavigationView=findViewById(R.id.bottom_navigation);
+        //bottomNavigationView.setOnNavigationItemSelectedListener(onBottomNavigationListener);
+        findViewById(R.id.mapButton).setOnClickListener(onClickListener);
+        findViewById(R.id.feedButton).setOnClickListener(onClickListener);
+        findViewById(R.id.requestButton).setOnClickListener(onClickListener);
         findViewById(R.id.writingButton).setOnClickListener(onClickListener);
-        findViewById(R.id.CameraButton).setOnClickListener(onClickListener);
-        findViewById(R.id.ProfileButton).setOnClickListener(onClickListener);
     }
 
 
     View.OnClickListener onClickListener = new View.OnClickListener() {
         public void onClick(View v) {
             switch (v.getId()) {
-                case R.id.logoutButton:
-                    FirebaseAuth.getInstance().signOut();
-                    startLoginActivity();
-                    break;
-                case R.id.CameraButton:
-                    startCameraActivity();
-                    break;
-                case R.id.ProfileButton:
-                    startProfileActivity();
-                    break;
                 case R.id.writingButton:
                     startWritingActivity();
                     break;
-                case R.id.LocationButton:
+                case R.id.mapButton:
                     startLocationActivity();
+                    break;
+                case R.id.feedButton:
+                    Intent intent=new Intent(getApplicationContext(),FeedActivity.class);
+                    startActivity(intent);
+                    break;
+                case R.id.requestButton:
                     break;
             }
         }
     };
 
-    BottomNavigationView.OnNavigationItemSelectedListener onBottomNavigationListener=new BottomNavigationView.OnNavigationItemSelectedListener() {
+
+    private void setupDrawerContent(NavigationView navigationView) {
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                        switch (menuItem.getItemId()) {
+                            case R.id.nav_writing:
+                                startWritingActivity();
+                                break;
+                            case R.id.nav_map:
+                                startLocationActivity();
+                                break;
+                            case R.id.nav_request:
+                                break;
+                            case R.id.nav_feed:
+                                Intent intent=new Intent(getApplicationContext(),FeedActivity.class);
+                                startActivity(intent);
+                                break;
+                            case R.id.nav_profile:
+                                startProfileActivity();
+                                break;
+                            case R.id.nav_logout:
+                                FirebaseAuth.getInstance().signOut();
+                                startLoginActivity();
+                                break;
+
+                        }
+                        menuItem.setChecked(true);
+                        drawerLayout.closeDrawers();
+                        return true;
+                    }
+                });
+    }
+
+
+    /*BottomNavigationView.OnNavigationItemSelectedListener onBottomNavigationListener=new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
             switch (menuItem.getItemId())
@@ -73,7 +130,7 @@ public class MainActivity extends BasisActivity {
             }
             return true;
         }
-    };
+    };*/
 
     private void startLocationActivity(){
         Intent intent = new Intent(this, MapActivity.class);

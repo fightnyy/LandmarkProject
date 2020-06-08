@@ -18,9 +18,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 
-import com.example.example02.Fragment.LocationSeletedChildFragment;
 import com.example.example02.Fragment.LocationSeletedFragment;
 import com.example.example02.GlideApp;
 import com.example.example02.Info.PostInfo;
@@ -42,7 +40,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
