@@ -67,9 +67,15 @@ public class MainActivity extends BasisActivity {
             switch (menuItem.getItemId())
             {
                 case R.id.feed:
-                    Intent intent=new Intent(getApplicationContext(),FeedActivity.class);
-                    startActivity(intent);
+                    Intent feedintent=new Intent(getApplicationContext(),FeedActivity.class);
+                    startActivity(feedintent);
                     return true;
+
+                case R.id.Request:
+                    Intent requestintent=new Intent(getApplicationContext(),RequestActivity.class);
+                    startActivity(requestintent);
+                    return true;
+
             }
             return true;
         }

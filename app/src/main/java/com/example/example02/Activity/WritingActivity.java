@@ -127,7 +127,6 @@ public class WritingActivity extends BasisActivity {
                     public void onComplete(@NonNull Task<Uri> task) {
                         if (task.isSuccessful()) {
                             Uri downloadUri = task.getResult();
-
                             String key = databaseReference.child("posts").push().getKey();
                             PostInfo postInfo = new PostInfo(writingText, downloadUri.toString(), user.getUid(), "수원", area, new Date(), key);
                             Map<String, Object> postValues = postInfo.toMap();

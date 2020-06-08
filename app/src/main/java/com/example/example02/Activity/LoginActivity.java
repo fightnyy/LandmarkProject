@@ -91,6 +91,13 @@ public class LoginActivity extends BasisActivity {
         }
     };
 
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);						// 태스크를 백그라운드로 이동
+        finishAndRemoveTask();						// 액티비티 종료 + 태스크 리스트에서 지우기
+        android.os.Process.killProcess(android.os.Process.myPid());
+    }
+
     private void login() {
         String email = ((EditText) findViewById(R.id.emailText)).getText().toString();
         String password = ((EditText) findViewById(R.id.passwordText)).getText().toString();
