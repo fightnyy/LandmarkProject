@@ -3,12 +3,14 @@ package com.example.example02.Fragment;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
+
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,51 +18,59 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+
 import com.bumptech.glide.Glide;
 import com.example.example02.Activity.FeedActivity;
-import com.example.example02.Activity.ProfileActivity;
 import com.example.example02.Info.PostInfo;
 import com.example.example02.OnFeedItemClickListener;
 import com.example.example02.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class FeedFragment extends Fragment  {
+public class FeedFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private List<PostInfo> imageDTOs = new ArrayList<>();
-    public  List<String> uidvalue=new ArrayList<>();
+    private List<PostInfo> Feeds = new ArrayList<>();
+
+
     private FirebaseDatabase database;
-    private List<PostInfo> result = new ArrayList<>();
     EditText editText;
     ViewGroup rootView;
-
-
+    Button btn_toggle;
+    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    private List<String> uids = new ArrayList<>();
 
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        rootView=(ViewGroup) inflater.inflate(R.layout.fragment_feed,container,false);
-        final Bundle bundle=new Bundle();
+        rootView = (ViewGroup) inflater.inflate(R.layout.fragment_feed, container, false);
         database = FirebaseDatabase.getInstance();
+        Log.d("oncreate","oncreate 호출됨");
+
+
         final FeedFragment.BoardRecyclerViewAdapter boardRecyclerViewAdapter = new BoardRecyclerViewAdapter();
+
+
         editText = rootView.findViewById(R.id.et_search);
         editText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String str = editText.getText().toString();
-                if(str.length()!=0){
+                if (str.length() != 0) {
                     database.getReference().child("posts").orderByChild("location").equalTo(str).addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -78,9 +88,76 @@ public class FeedFragment extends Fragment  {
 
                         }
                     });
+                } else {
+                    database.getReference().child("posts").addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            imageDTOs.clear();
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                PostInfo imageDTO = snapshot.getValue(PostInfo.class);
+                                imageDTOs.add(imageDTO);
+                            }
+                            boardRecyclerViewAdapter.notifyDataSetChanged();
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
                 }
-                else
-                {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+
+        btn_toggle = rootView.findViewById(R.id.btn_toggle);
+
+
+
+        final String uid = user.getUid();
+        btn_toggle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (btn_toggle.getText().equals("팔로워 보기")) {
+                    btn_toggle.setText("모든 피드 보기");
+
+                    database.getReference().child("follow").child(uid).child("following").addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            uids.clear();
+                            Feeds.clear();
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                uids.add(snapshot.getKey());
+                            }
+
+                            for (int i = 0; i < imageDTOs.size(); i++) {
+                                Log.d("qwerty12",imageDTOs.get(i).toString());
+                                for (int j = 0; j < uids.size(); j++) {
+                                    if (imageDTOs.get(i).getPublisher().equals(uids.get(j))) {
+                                        Feeds.add(imageDTOs.get(i));
+
+                                    }
+                                }
+                            }
+                            imageDTOs=Feeds;
+                            boardRecyclerViewAdapter.notifyDataSetChanged();
+                        }
+
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+
+                else {
+                    btn_toggle.setText("팔로워 보기");
                     database.getReference().child("posts").addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -99,15 +176,10 @@ public class FeedFragment extends Fragment  {
 
                         }
                     });
+
                 }
             }
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
         });
-
-
 
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 3);
         recyclerView = rootView.findViewById(R.id.recyclerView);
@@ -116,8 +188,8 @@ public class FeedFragment extends Fragment  {
         boardRecyclerViewAdapter.setOnItemClickListener(new OnFeedItemClickListener() {
             @Override
             public void onItemClick(RecyclerView.ViewHolder holder, View view, int position) {
-                PostInfo item=boardRecyclerViewAdapter.getItem(position);
-               ((FeedActivity)getActivity()).DetailFeed(item.getPublisher());
+                PostInfo item = boardRecyclerViewAdapter.getItem(position);
+                ((FeedActivity) getActivity()).DetailFeed(item.getPublisher(), position);
 
             }
         });
@@ -146,11 +218,11 @@ public class FeedFragment extends Fragment  {
 
 
 
+
     class BoardRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements OnFeedItemClickListener {
         OnFeedItemClickListener listener;
 
-        public PostInfo getItem(int position)
-        {
+        public PostInfo getItem(int position) {
             return imageDTOs.get(position);
         }
 
@@ -159,7 +231,7 @@ public class FeedFragment extends Fragment  {
 
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_feed_list, parent, false);
 
-            return new CustomViewHolder(view,listener);
+            return new CustomViewHolder(view, listener);
         }
 
 
@@ -173,20 +245,18 @@ public class FeedFragment extends Fragment  {
             return imageDTOs.size();
         }
 
-        public void setOnItemClickListener(OnFeedItemClickListener listener)
-        {
-            this.listener=listener;
+        public void setOnItemClickListener(OnFeedItemClickListener listener) {
+            this.listener = listener;
         }
 
         @Override
         public void onItemClick(RecyclerView.ViewHolder holder, View view, int position) {
-            if(listener!=null)
-            {
-                listener.onItemClick(holder,view,position);
+            if (listener != null) {
+                listener.onItemClick(holder, view, position);
             }
         }
 
-       public class CustomViewHolder extends RecyclerView.ViewHolder {
+        public class CustomViewHolder extends RecyclerView.ViewHolder {
             public ImageView imageView;
 
 
@@ -196,11 +266,10 @@ public class FeedFragment extends Fragment  {
                 view.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        int position=getAdapterPosition();
+                        int position = getAdapterPosition();
 
-                        if(listener!=null)
-                        {
-                            listener.onItemClick(FeedFragment.BoardRecyclerViewAdapter.CustomViewHolder.this,v,position);
+                        if (listener != null) {
+                            listener.onItemClick(FeedFragment.BoardRecyclerViewAdapter.CustomViewHolder.this, v, position);
                         }
                     }
                 });

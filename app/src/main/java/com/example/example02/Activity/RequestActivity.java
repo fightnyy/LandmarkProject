@@ -40,7 +40,7 @@ public class RequestActivity extends AppCompatActivity
     private GpsTracker gpsTracker;
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private DatabaseReference mDatabase;// ...
-    FirebaseAuth auth;
+
     String location;
     String detailLocation;
     String Reason;
@@ -248,7 +248,7 @@ public class RequestActivity extends AppCompatActivity
         AlertDialog.Builder builder = new AlertDialog.Builder(RequestActivity.this);
         builder.setTitle("위치 서비스 비활성화");
         builder.setMessage("앱을 사용하기 위해서는 위치 서비스가 필요합니다.\n"
-                + "위치 설정을 수정하실래요?");
+                + "위치 설정을 수정하시겠습니까?");
         builder.setCancelable(true);
         builder.setPositiveButton("설정", new DialogInterface.OnClickListener() {
             @Override

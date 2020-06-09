@@ -9,7 +9,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/white_grey_border_bottom">
+        android:background="#FFFF">
 
         <ScrollView
             android:layout_width="match_parent"
@@ -23,7 +23,7 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="#40000000">
+                    android:background="#40FFFFFF">
 
                     <RelativeLayout
                         android:id="@+id/relLayout"
@@ -99,7 +99,8 @@
                     <RelativeLayout
                         android:id="@+id/relLayout03"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="30dp"
+                        android:alpha="0.5"
                         android:layout_below="@+id/postImage"
                         android:background="@drawable/white_grey_border_bottom">
 
@@ -109,42 +110,49 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_margin="16dp"
-                            android:layout_marginTop="14dp"
                             android:ellipsize="end"
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             android:textSize="15dp"
                             android:visibility="gone" />
 
-                        <TextView
-                            android:id="@+id/description_text"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="16dp"
-                            android:layout_marginTop="14dp"
-                            android:ellipsize="end"
-                            android:layout_toRightOf="@id/Like"
-                            android:textAppearance="?android:attr/textAppearanceMedium"
-                            android:textSize="15dp" />
 
                         <ImageView
-                            android:layout_centerVertical="true"
                             android:id="@+id/Like"
-                            android:layout_margin="5dp"
+                            android:padding="0dp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/favorite_border"/>
+                            android:layout_centerVertical="true"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginEnd="10dp"
+                            android:layout_marginBottom="10dp"
+                            android:src="@drawable/favorite_border" />
+
                         <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
                             android:id="@+id/LikeNum"
-                            android:layout_below="@id/Like"/>
+                            android:layout_toRightOf="@id/Like"
+                            android:layout_width="wrap_content"
+                            android:paddingTop="5dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"/>
                     </RelativeLayout>
+                    <TextView
+                        android:id="@+id/description_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/relLayout03"
+                        android:ellipsize="end"
+                        android:paddingStart="10dp"
+                        android:background="#FFFF"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:layout_marginBottom="10dp"
+                        android:textSize="15dp" />
+
 
                     <RelativeLayout
                         android:id="@+id/relLayout04"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_below="@+id/relLayout03"
+                        android:layout_below="@+id/description_text"
                         android:background="@drawable/white_grey_border_bottom">
 
                         <androidx.recyclerview.widget.RecyclerView

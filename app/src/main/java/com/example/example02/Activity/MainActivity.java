@@ -77,6 +77,8 @@ public class MainActivity extends BasisActivity {
                     startActivity(intent);
                     break;
                 case R.id.requestButton:
+                    Intent intent1=new Intent(getApplicationContext(),RequestActivity.class);
+                    startActivity(intent1);
                     break;
             }
         }

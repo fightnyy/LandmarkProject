@@ -49,36 +49,38 @@ public class DetailFeedFragment extends Fragment {
     private String userID;
     ViewGroup rootView;
     FirebaseAuth auth;
-    final DetailFeedFragment.BoardRecyclerViewAdapter boardRecyclerViewAdapter = new BoardRecyclerViewAdapter();
+    int detailposition;
 
+    final DetailFeedFragment.BoardRecyclerViewAdapter boardRecyclerViewAdapter = new BoardRecyclerViewAdapter();
+    LinearLayoutManager layoutManager;
+
+
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            userID = getArguments().getString("username");
+            detailposition=getArguments().getInt("position");
+        }
+        Log.d("onCreate작동","onCreate작동"+detailposition);
+        layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        layoutManager.scrollToPosition(detailposition);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         auth = FirebaseAuth.getInstance();
         rootView = (ViewGroup) inflater.inflate(R.layout.fragment_detail_feed, container, false);
-        if (getArguments() != null) {
-            userID = getArguments().getString("username");
-        }
+
         database = FirebaseDatabase.getInstance();
+
         database.getReference().child("posts").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                uidlist.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    String uidkey = snapshot.getKey();
-                    uidlist.add(uidkey);
-                    Log.d("hello123",uidkey);
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        });
-        database.getReference().child("posts").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
                 imageDTOs.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                for(DataSnapshot snapshot: dataSnapshot.getChildren())
+                {
                     PostInfo imageDTO = snapshot.getValue(PostInfo.class);
                     imageDTOs.add(imageDTO);
                 }
@@ -87,26 +89,64 @@ public class DetailFeedFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
+
             }
         });
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+
+
+
+        database.getReference().child("posts").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                uidlist.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String uidkey = snapshot.getKey();
+                    uidlist.add(uidkey);
+                }
+                boardRecyclerViewAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
         recyclerView = rootView.findViewById(R.id.detail_recyclerView);
         recyclerView.setAdapter(boardRecyclerViewAdapter);
         recyclerView.setLayoutManager(layoutManager);
+
         return rootView;
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (getArguments() != null) {
+            userID = getArguments().getString("username");
+            detailposition=getArguments().getInt("position");
+        }
+        Log.d("onResume작동","onResume작동"+detailposition);
+        layoutManager.scrollToPosition(detailposition);
+
+    }
+
     class BoardRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public PostInfo getItem(int position) {
             return imageDTOs.get(position);
         }
+
+
+
+
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_post_detail, parent, false);
-            return new CustomViewHolder(view);
+            View itemview = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_post_detail, parent, false);
+            layoutManager.scrollToPosition(detailposition);
+            return new CustomViewHolder(itemview);
         }
+
+
         @Override
         public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
-            Log.d("hello123",position+"");
             database = FirebaseDatabase.getInstance();
             final FirebaseFirestore db = FirebaseFirestore.getInstance();
             Glide.with(holder.itemView.getContext()).load(imageDTOs.get(position).getPhotoUrl()).into(((CustomViewHolder) holder).postImage);
@@ -114,9 +154,11 @@ public class DetailFeedFragment extends Fragment {
             ((CustomViewHolder) holder).Like.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v){
-                    onLikeClicked(database.getReference().child("posts").child(uidlist.get(position)));
+                    onLikeClicked(database.getReference().child("posts").child(uidlist.get(detailposition)));
                 }
             });
+
+
             if (imageDTOs.get(position).stars.containsKey(auth.getCurrentUser().getUid())) {
                 ((CustomViewHolder) holder).Like.setImageResource(R.drawable.favorite);
             } else {
@@ -126,7 +168,8 @@ public class DetailFeedFragment extends Fragment {
 
 
 
-            DocumentReference docRef = db.collection("users").document(userID);
+
+            DocumentReference docRef = db.collection("users").document(imageDTOs.get(position).getPublisher());
             docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -148,6 +191,35 @@ public class DetailFeedFragment extends Fragment {
 
         }
 
+
+        @Override
+        public int getItemCount() {
+            return imageDTOs.size();
+        }
+
+
+        public class CustomViewHolder extends RecyclerView.ViewHolder {
+            public ImageView profileImage;
+            public TextView userName;
+            public ImageView postImage;
+            public TextView description_text;
+            public ImageView Like;
+            public TextView LikeNum;
+
+            public CustomViewHolder(View itemview) {
+                super(itemview);
+                profileImage = itemview.findViewById(R.id.profileImage);
+                userName = itemview.findViewById(R.id.userName);
+                postImage = itemview.findViewById(R.id.postImage);
+                description_text = itemview.findViewById(R.id.description_text);
+                Like = itemview.findViewById(R.id.Like);
+                LikeNum=itemview.findViewById(R.id.LikeNum);
+
+
+
+
+            }
+        }
         private void onLikeClicked(DatabaseReference postRef) {
             postRef.runTransaction(new Transaction.Handler() {
                 @Override
@@ -172,32 +244,6 @@ public class DetailFeedFragment extends Fragment {
                                        DataSnapshot dataSnapshot) {
                 }
             });
-        }
-
-        @Override
-        public int getItemCount() {
-            return imageDTOs.size();
-        }
-
-
-        public class CustomViewHolder extends RecyclerView.ViewHolder {
-            public ImageView profileImage;
-            public TextView userName;
-            public ImageView postImage;
-            public TextView description_text;
-            public ImageView Like;
-            public TextView LikeNum;
-
-            public CustomViewHolder(View view) {
-                super(view);
-                profileImage = view.findViewById(R.id.profileImage);
-                userName = view.findViewById(R.id.userName);
-                postImage = view.findViewById(R.id.postImage);
-                description_text = view.findViewById(R.id.description_text);
-                Like = view.findViewById(R.id.Like);
-                LikeNum=view.findViewById(R.id.LikeNum);
-
-            }
         }
     }
 }

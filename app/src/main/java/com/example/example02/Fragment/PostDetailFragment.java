@@ -2,6 +2,7 @@ package com.example.example02.Fragment;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.media.Image;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -90,24 +91,19 @@ public class PostDetailFragment extends Fragment {
         Image = (ImageView) view.findViewById(R.id.postImage);
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
 
-        try {
-            item = ((ProfileActivity) getActivity()).getPostInfo();
-        }catch (Exception e)
-        {
-            e.printStackTrace();
-            Log.d("hello123","oaidgjoadgij");
-        }
-        Log.d("qwerty","abcde"+getActivity().toString());
+
+        item = ((ProfileActivity) getActivity()).getPostInfo();
+
 
         db = FirebaseFirestore.getInstance();
         databaseReference = FirebaseDatabase.getInstance().getReference("posts");
         databaseReferenceComment = FirebaseDatabase.getInstance().getReference("comments");
-        database  = FirebaseDatabase.getInstance();
-        GlideApp.with(getActivity()).asBitmap().load(item.getPhotoUrl()).into(Image);
+        database = FirebaseDatabase.getInstance();
+//        GlideApp.with(getActivity()).asBitmap().load(item.getPhotoUrl()).into(android.media.Image);
         userText.setText(item.getPostText());
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
-        GridLayoutManager layoutManager = new GridLayoutManager(getActivity(),1);
+        GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 1);
         recyclerView.setLayoutManager(layoutManager);
         final BoardRecyclerViewAdapter boardRecyclerViewAdapter = new BoardRecyclerViewAdapter();
         recyclerView.setAdapter(boardRecyclerViewAdapter);
@@ -116,7 +112,7 @@ public class PostDetailFragment extends Fragment {
             @Override
             public void onItemClick(RecyclerView.ViewHolder holder, View view, int position) {
                 CommentInfo comment = boardRecyclerViewAdapter.getItem(position);
-                startToast("아이템선택됨"+comment.getComment());
+                startToast("아이템선택됨" + comment.getComment());
             }
         });
 
@@ -252,11 +248,11 @@ public class PostDetailFragment extends Fragment {
         Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
     }
 
+
     class BoardRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements OnFeedItemClickListener {
         OnFeedItemClickListener listener;
 
-        public CommentInfo getItem(int position)
-        {
+        public CommentInfo getItem(int position) {
             return result.get(position);
         }
 
@@ -268,7 +264,7 @@ public class PostDetailFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
-            if(user.getUid().equals(result.get(position).getPublisher()))
+            if (user.getUid().equals(result.get(position).getPublisher()))
                 ((CustomViewHolder) holder).removeImage.setImageResource(R.drawable.close_black);
 
             ((CustomViewHolder) holder).comment.setText(result.get(position).getComment());
