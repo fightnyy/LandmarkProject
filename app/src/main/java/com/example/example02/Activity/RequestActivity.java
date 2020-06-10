@@ -85,7 +85,6 @@ public class RequestActivity extends AppCompatActivity
 
         String address = getCurrentAddress(latitude, longitude);
         textview_address.setText(address);
-        Toast.makeText(RequestActivity.this, "현재위치 \n위도 " + latitude + "\n경도 " + longitude, Toast.LENGTH_LONG).show();
         Log.d("goodtok",mDatabase.toString()+"챱챱");
 
 

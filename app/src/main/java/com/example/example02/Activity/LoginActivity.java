@@ -75,6 +75,7 @@ public class LoginActivity extends BasisActivity {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.loginButton:
+                    mProgressBar.setVisibility(View.VISIBLE);
                     login();
                     break;
                 case R.id.registerButton:
@@ -110,10 +111,11 @@ public class LoginActivity extends BasisActivity {
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
                                 // Sign in success, update UI with the signed-in user's information
-                                mProgressBar.setVisibility(View.VISIBLE);
+
 
                                 FirebaseUser user = mAuth.getCurrentUser();
                                 startToast("로그인에 성공하였습니다.");
+                                mProgressBar.setVisibility(View.GONE);
                                 myStartActivity(MainActivity.class);
                             } else {
                                 if (task.getException() != null)
