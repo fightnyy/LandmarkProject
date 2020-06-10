@@ -66,6 +66,8 @@ public class PostDetailFragment extends Fragment {
     private ImageView Image;
     private ImageView finishButton;
     private View view;
+    private ImageView changeButton;
+    private ImageView removeButton;
 
     private List<CommentInfo> imageDTOs = new ArrayList<>();
     private List<CommentInfo> result = new ArrayList<>();
@@ -82,8 +84,6 @@ public class PostDetailFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_post_detail, null);
 
         view.findViewById(R.id.backButton).setOnClickListener(onClickListener);
-        view.findViewById(R.id.removeButton).setOnClickListener(onClickListener);
-        view.findViewById(R.id.changeButton).setOnClickListener(onClickListener);
         view.findViewById(R.id.sendCommend).setOnClickListener(onClickListener);
         userName = (TextView) view.findViewById(R.id.userName);
         userText = (TextView) view.findViewById(R.id.description_text);
@@ -91,15 +91,13 @@ public class PostDetailFragment extends Fragment {
         Image = (ImageView) view.findViewById(R.id.postImage);
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
 
-
         item = ((ProfileActivity) getActivity()).getPostInfo();
-
 
         db = FirebaseFirestore.getInstance();
         databaseReference = FirebaseDatabase.getInstance().getReference("posts");
         databaseReferenceComment = FirebaseDatabase.getInstance().getReference("comments");
         database = FirebaseDatabase.getInstance();
-//        GlideApp.with(getActivity()).asBitmap().load(item.getPhotoUrl()).into(android.media.Image);
+        GlideApp.with(getActivity()).asBitmap().load(item.getPhotoUrl()).into(Image);
         userText.setText(item.getPostText());
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
@@ -115,6 +113,16 @@ public class PostDetailFragment extends Fragment {
                 startToast("아이템선택됨" + comment.getComment());
             }
         });
+
+        if(user.getUid().equals(item.getPublisher())){
+            changeButton = (ImageView) view.findViewById(R.id.changeButton);
+            changeButton.setImageResource(R.drawable.baseline_create_black);
+            view.findViewById(R.id.changeButton).setOnClickListener(onClickListener);
+
+            removeButton = (ImageView) view.findViewById(R.id.removeButton);
+            removeButton.setImageResource(R.drawable.close_black);
+            view.findViewById(R.id.removeButton).setOnClickListener(onClickListener);
+        }
 
         DocumentReference docRef = db.collection("users").document(item.getPublisher());
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {

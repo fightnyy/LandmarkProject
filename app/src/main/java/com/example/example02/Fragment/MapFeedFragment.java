@@ -121,7 +121,7 @@ public class MapFeedFragment extends Fragment {
 
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.map_post_item, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_post_detail, parent, false);
             return new MapPostAdapter.CustomViewHolder(view);
         }
 

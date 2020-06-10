@@ -91,138 +91,77 @@ public class ProfileFragment extends Fragment {
         followingButton = (TextView) view.findViewById(R.id.followingButton);
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
-        GridLayoutManager layoutManager = new GridLayoutManager(getActivity(),2);
+        GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
         recyclerView.setLayoutManager(layoutManager);
         final ProfileFragment.BoardRecyclerViewAdapter boardRecyclerViewAdapter = new ProfileFragment.BoardRecyclerViewAdapter();
         recyclerView.setAdapter(boardRecyclerViewAdapter);
 
-        if(userUid.equals(user.getUid())){
-            DocumentReference docRef = db.collection("users").document(user.getUid());
-            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if (task.isSuccessful()) {
-                        DocumentSnapshot document = task.getResult();
-                        if (document != null) {
-                            if (document.exists()) {
-                                ImageView ProfileImage = (ImageView) view.findViewById(R.id.Profileimage);
-                                TextView tv_name = (TextView) view.findViewById(R.id.tv_name);
-                                TextView tv_address = (TextView) view.findViewById(R.id.tv_address);
-                                TextView tv_email = (TextView) view.findViewById(R.id.tv_email);
-                                tv_name.setText(document.getData().get("name").toString());
-                                tv_address.setText(document.getData().get("address").toString());
-                                setProflieImage(document, ProfileImage);
-                                tv_email.setText(user.getEmail());
-                            } else {
-                                Log.d(TAG, "No such document");
-                                profileSetting();
-                                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                                fragmentManager.beginTransaction().remove(ProfileFragment.this).commit();
-                                fragmentManager.popBackStack();
-                                ((ProfileActivity) getActivity()).FinishActiviy();
-                            }
+        DocumentReference docRef = db.collection("users").document(userUid);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document != null) {
+                        if (document.exists()) {
+                            ImageView ProfileImage = (ImageView) view.findViewById(R.id.Profileimage);
+                            TextView tv_name = (TextView) view.findViewById(R.id.tv_name);
+                            TextView tv_address = (TextView) view.findViewById(R.id.tv_address);
+                            TextView tv_email = (TextView) view.findViewById(R.id.tv_email);
+                            tv_name.setText(document.getData().get("name").toString());
+                            tv_address.setText(document.getData().get("address").toString());
+                            setProflieImage(document, ProfileImage);
+                            tv_email.setText(user.getEmail());
+                        } else {
+                            Log.d(TAG, "No such document");
+                            profileSetting();
+                            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                            fragmentManager.beginTransaction().remove(ProfileFragment.this).commit();
+                            fragmentManager.popBackStack();
+                            ((ProfileActivity) getActivity()).FinishActiviy();
                         }
-                    } else {
-                        Log.d(TAG, "get failed with ", task.getException());
                     }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
                 }
-            });
+            }
+        });
 
-            database.getReference().child("posts").orderByChild("publisher").equalTo(user.getUid()).addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    imageDTOs.clear();
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        PostInfo imageDTO = snapshot.getValue(PostInfo.class);
-                        imageDTOs.add(imageDTO);
-                    }
-                    for(int i = 0; i < imageDTOs.size(); i++) {
-                        result.add(imageDTOs.get(imageDTOs.size() - i - 1));
-                        Log.d(TAG, imageDTOs.get(i).getPhotoUrl());
-                    }
+        database.getReference().child("posts").orderByChild("publisher").equalTo(userUid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                imageDTOs.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    PostInfo imageDTO = snapshot.getValue(PostInfo.class);
+                    imageDTOs.add(imageDTO);
+                }
+                for (int i = 0; i < imageDTOs.size(); i++) {
+                    result.add(imageDTOs.get(imageDTOs.size() - i - 1));
+                    Log.d(TAG, imageDTOs.get(i).getPhotoUrl());
+                }
 
-                    boardRecyclerViewAdapter.notifyDataSetChanged();
-                }
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                }
-            });
+                boardRecyclerViewAdapter.notifyDataSetChanged();
+            }
 
-            database.getReference().child("follow").child(user.getUid()).addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    FollowInfo followInfo = dataSnapshot.getValue(FollowInfo.class);
-                    if(followInfo != null){
-                        followButton.setText(followInfo.followerCount + "");
-                        followingButton.setText(followInfo.followingCount + "");
-                    }
-                }
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                }
-            });
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
 
-        }else{
-            DocumentReference docRef = db.collection("users").document(userUid);
-            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if (task.isSuccessful()) {
-                        DocumentSnapshot document = task.getResult();
-                        if (document != null) {
-                            if (document.exists()) {
-                                ImageView ProfileImage = (ImageView) view.findViewById(R.id.Profileimage);
-                                TextView tv_name = (TextView) view.findViewById(R.id.tv_name);
-                                TextView tv_address = (TextView) view.findViewById(R.id.tv_address);
-                                TextView tv_email = (TextView) view.findViewById(R.id.tv_email);
-                                tv_name.setText(document.getData().get("name").toString());
-                                tv_address.setText(document.getData().get("address").toString());
-                                setProflieImage(document, ProfileImage);
-                                tv_email.setText(user.getEmail());
-                            } else {
-                                Log.d(TAG, "No such document");
-                            }
-                        }
-                    } else {
-                        Log.d(TAG, "get failed with ", task.getException());
-                    }
+        database.getReference().child("follow").child(userUid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                FollowInfo followInfo = dataSnapshot.getValue(FollowInfo.class);
+                if (followInfo != null) {
+                    followButton.setText(followInfo.followerCount + "");
+                    followingButton.setText(followInfo.followingCount + "");
                 }
-            });
+            }
 
-            database.getReference().child("posts").orderByChild("publisher").equalTo(userUid).addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    imageDTOs.clear();
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        PostInfo imageDTO = snapshot.getValue(PostInfo.class);
-                        imageDTOs.add(imageDTO);
-                    }
-                    for(int i = 0; i < imageDTOs.size(); i++) {
-                        result.add(imageDTOs.get(imageDTOs.size() - i - 1));
-                        Log.d(TAG, imageDTOs.get(i).getPhotoUrl());
-                    }
-
-                    boardRecyclerViewAdapter.notifyDataSetChanged();
-                }
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                }
-            });
-
-            database.getReference().child("follow").child(userUid).addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    FollowInfo followInfo = dataSnapshot.getValue(FollowInfo.class);
-                    if(followInfo != null){
-                        followButton.setText(followInfo.followerCount + "");
-                        followingButton.setText(followInfo.followingCount + "");
-                    }
-                }
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                }
-            });
-        }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
 
 
         boardRecyclerViewAdapter.setOnItemClickListener(new OnFeedItemClickListener() {
@@ -246,15 +185,15 @@ public class ProfileFragment extends Fragment {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.setting:
-                    if(userUid.equals(user.getUid()))
+                    if (userUid.equals(user.getUid()))
                         profileSetting();
                     break;
                 case R.id.Profileimage:
                     break;
                 case R.id.followButton:
-                    if(userUid.equals(user.getUid())){
+                    if (userUid.equals(user.getUid())) {
 
-                    }else{
+                    } else {
 
                         builder = new AlertDialog.Builder(getContext());
                         builder.setTitle("팔로우");
@@ -300,6 +239,7 @@ public class ProfileFragment extends Fragment {
                 mutableData.setValue(followInfo);
                 return Transaction.success(mutableData);
             }
+
             @Override
             public void onComplete(DatabaseError databaseError, boolean b,
                                    DataSnapshot dataSnapshot) {
@@ -325,6 +265,7 @@ public class ProfileFragment extends Fragment {
                 mutableData.setValue(followInfo);
                 return Transaction.success(mutableData);
             }
+
             @Override
             public void onComplete(DatabaseError databaseError, boolean b,
                                    DataSnapshot dataSnapshot) {
@@ -338,7 +279,7 @@ public class ProfileFragment extends Fragment {
 
     private void setProflieImage(DocumentSnapshot document, ImageView ProfileImage) {
         String photoUrl = document.getData().get("photoUrl").toString();
-        if(photoUrl != null)
+        if (photoUrl != null)
             GlideApp.with(this).asBitmap().load(document.getData().get("photoUrl").toString()).apply(new RequestOptions().circleCrop()).into(ProfileImage);
     }
 
@@ -349,8 +290,7 @@ public class ProfileFragment extends Fragment {
     class BoardRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements OnFeedItemClickListener {
         OnFeedItemClickListener listener;
 
-        public PostInfo getItem(int position)
-        {
+        public PostInfo getItem(int position) {
             return result.get(position);
         }
 
@@ -362,7 +302,7 @@ public class ProfileFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-            Glide.with(holder.itemView.getContext()).load(result.get(position).getPhotoUrl()).into(((ProfileFragment.BoardRecyclerViewAdapter.CustomViewHolder)holder).imageView);
+            Glide.with(holder.itemView.getContext()).load(result.get(position).getPhotoUrl()).into(((ProfileFragment.BoardRecyclerViewAdapter.CustomViewHolder) holder).imageView);
         }
 
         @Override
@@ -370,21 +310,20 @@ public class ProfileFragment extends Fragment {
             return imageDTOs.size();
         }
 
-        public void setOnItemClickListener(OnFeedItemClickListener listener)
-        {
-            this.listener=listener;
+        public void setOnItemClickListener(OnFeedItemClickListener listener) {
+            this.listener = listener;
         }
 
         @Override
         public void onItemClick(RecyclerView.ViewHolder holder, View view, int position) {
-            if(listener!=null)
-            {
-                listener.onItemClick(holder,view,position);
+            if (listener != null) {
+                listener.onItemClick(holder, view, position);
             }
         }
 
         private class CustomViewHolder extends RecyclerView.ViewHolder {
             ImageView imageView;
+
             public CustomViewHolder(View view) {
                 super(view);
                 imageView = (ImageView) view.findViewById(R.id.postView);
@@ -392,9 +331,8 @@ public class ProfileFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         int position = getAdapterPosition();
-                        if(listener!=null)
-                        {
-                            listener.onItemClick(ProfileFragment.BoardRecyclerViewAdapter.CustomViewHolder.this,v,position);
+                        if (listener != null) {
+                            listener.onItemClick(ProfileFragment.BoardRecyclerViewAdapter.CustomViewHolder.this, v, position);
                         }
                     }
                 });

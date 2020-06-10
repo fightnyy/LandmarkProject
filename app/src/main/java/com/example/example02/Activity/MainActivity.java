@@ -110,7 +110,6 @@ public class MainActivity extends BasisActivity {
                                 FirebaseAuth.getInstance().signOut();
                                 startLoginActivity();
                                 break;
-
                         }
                         menuItem.setChecked(true);
                         drawerLayout.closeDrawers();
