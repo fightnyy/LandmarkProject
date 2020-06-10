@@ -60,6 +60,23 @@
                 android:ellipsize="end"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textSize="15dp" />
+            <ImageView
+                android:id="@+id/Like"
+                android:padding="0dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:src="@drawable/favorite_border" />
+            <TextView
+                android:id="@+id/LikeNum"
+                android:layout_toRightOf="@id/Like"
+                android:layout_width="wrap_content"
+                android:paddingTop="5dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"/>
 
         </RelativeLayout>
 

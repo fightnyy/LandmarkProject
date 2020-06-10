@@ -119,6 +119,7 @@ public class LoginActivity extends BasisActivity {
                                 myStartActivity(MainActivity.class);
                             } else {
                                 if (task.getException() != null)
+                                    mProgressBar.setVisibility(View.GONE);
                                     startToast(task.getException().toString());
                             }
                         }

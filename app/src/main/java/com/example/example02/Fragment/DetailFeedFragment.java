@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -65,7 +66,7 @@ public class DetailFeedFragment extends Fragment {
         }
         Log.d("onCreate작동","onCreate작동"+detailposition);
         layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-        layoutManager.scrollToPosition(detailposition);
+
     }
 
     @Override
@@ -118,16 +119,18 @@ public class DetailFeedFragment extends Fragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        if (getArguments() != null) {
-            userID = getArguments().getString("username");
-            detailposition=getArguments().getInt("position");
-        }
-        Log.d("onResume작동","onResume작동"+detailposition);
-        layoutManager.scrollToPosition(detailposition);
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                layoutManager.scrollToPosition(detailposition);
+            }
+        }, 100);
     }
+
+
 
     class BoardRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public PostInfo getItem(int position) {
@@ -140,7 +143,7 @@ public class DetailFeedFragment extends Fragment {
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View itemview = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_post_detail, parent, false);
-            layoutManager.scrollToPosition(detailposition);
+
             return new CustomViewHolder(itemview);
         }
 
