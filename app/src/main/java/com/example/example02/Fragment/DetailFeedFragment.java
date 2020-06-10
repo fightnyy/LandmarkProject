@@ -151,12 +151,16 @@ public class DetailFeedFragment extends Fragment {
             final FirebaseFirestore db = FirebaseFirestore.getInstance();
             Glide.with(holder.itemView.getContext()).load(imageDTOs.get(position).getPhotoUrl()).into(((CustomViewHolder) holder).postImage);
             ((CustomViewHolder) holder).description_text.setText(imageDTOs.get(position).getPostText());
+            Log.d("startcomplete",position+"파이널전");
             ((CustomViewHolder) holder).Like.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v){
-                    onLikeClicked(database.getReference().child("posts").child(uidlist.get(detailposition)));
+                public void onClick(View v) {
+                    onLikeClicked(database.getReference().child("posts").child(uidlist.get(position)));
+                    Log.d("startcomplete",position+"");
                 }
             });
+
+
 
 
             if (imageDTOs.get(position).stars.containsKey(auth.getCurrentUser().getUid())) {
@@ -190,6 +194,12 @@ public class DetailFeedFragment extends Fragment {
             });
 
         }
+        View.OnClickListener listener=new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        };
 
 
         @Override
