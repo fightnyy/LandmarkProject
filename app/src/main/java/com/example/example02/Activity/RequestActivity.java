@@ -88,6 +88,7 @@ public class RequestActivity extends AppCompatActivity
         Toast.makeText(RequestActivity.this, "현재위치 \n위도 " + latitude + "\n경도 " + longitude, Toast.LENGTH_LONG).show();
         Log.d("goodtok",mDatabase.toString()+"챱챱");
 
+
         ShowLocationButton.setOnClickListener(new View.OnClickListener()
 
 
@@ -99,11 +100,16 @@ public class RequestActivity extends AppCompatActivity
                 detailLocation = tmpdetaillocation.getText().toString();
                 Reason = tmpReason.getText().toString();
 
-
-                RequestInfo a = new RequestInfo(location, detailLocation, Reason,user.getEmail());
-                mDatabase.child("Request").push().setValue(a);
-                Toast.makeText(getApplicationContext(),"소중한 의견 감사합니다.",Toast.LENGTH_SHORT).show();
-                finish();
+                if(Reason.length()==0||detailLocation.length()==0)
+                {
+                    Toast.makeText(getApplicationContext(),"빈칸 없이 진행해주세요",Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    RequestInfo a = new RequestInfo(location, detailLocation, Reason, user.getEmail());
+                    mDatabase.child("Request").push().setValue(a);
+                    Toast.makeText(getApplicationContext(), "소중한 의견 감사합니다.", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
             }
 
         });
