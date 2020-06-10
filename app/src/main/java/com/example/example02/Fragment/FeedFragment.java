@@ -40,6 +40,9 @@ public class FeedFragment extends Fragment {
     private RecyclerView recyclerView;
     private List<PostInfo> imageDTOs = new ArrayList<>();
     private List<PostInfo> Feeds = new ArrayList<>();
+    private List<PostInfo> answer=new ArrayList<>();
+    private List<String> photoanswer=new ArrayList<>();
+    private int flag=0;
 
 
     private FirebaseDatabase database;
@@ -48,6 +51,7 @@ public class FeedFragment extends Fragment {
     Button btn_toggle;
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private List<String> uids = new ArrayList<>();
+    int a=0;
 
 
     @Nullable
@@ -55,7 +59,6 @@ public class FeedFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = (ViewGroup) inflater.inflate(R.layout.fragment_feed, container, false);
         database = FirebaseDatabase.getInstance();
-        Log.d("oncreate","oncreate 호출됨");
 
 
         final FeedFragment.BoardRecyclerViewAdapter boardRecyclerViewAdapter = new BoardRecyclerViewAdapter();
@@ -71,7 +74,7 @@ public class FeedFragment extends Fragment {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String str = editText.getText().toString();
                 if (str.length() != 0) {
-                    database.getReference().child("posts").orderByChild("location").equalTo(str).addValueEventListener(new ValueEventListener() {
+                    database.getReference().child("posts").orderByChild("area").equalTo(str).addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -115,36 +118,58 @@ public class FeedFragment extends Fragment {
         });
 
 
+
+
+
+
+
+
         btn_toggle = rootView.findViewById(R.id.btn_toggle);
 
 
-
         final String uid = user.getUid();
+
+
         btn_toggle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (btn_toggle.getText().equals("팔로워 보기")) {
                     btn_toggle.setText("모든 피드 보기");
 
+                    Log.d("checkdebug", imageDTOs.size() + "");
+                    Log.d("checkdebug", "---------------------------------1 버튼 눌렸을때 imgdto 사이즈");
+                    if (flag == 0) {
+                        for (int i = 0; i < imageDTOs.size(); i++) {
+                            answer.add(imageDTOs.get(i));
+                        }
+                        flag=1;
+                    }
+
                     database.getReference().child("follow").child(uid).child("following").addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             uids.clear();
                             Feeds.clear();
+
                             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                 uids.add(snapshot.getKey());
+                                Log.d("checkdebug", snapshot.getKey());
+
                             }
+                            Log.d("checkdebug", imageDTOs.size() + "answersize:     "+answer.size()+"uids:  "+uids.size());
+                            Log.d("checkdebug", "---------------------------------2내가 팔로우하고 있는 모든 키들 가져오기 이때 imageDto의 사이즈도 asweruid");
 
-                            for (int i = 0; i < imageDTOs.size(); i++) {
-                                Log.d("qwerty12",imageDTOs.get(i).toString());
+                            for (int i = 0; i < answer.size(); i++) {
                                 for (int j = 0; j < uids.size(); j++) {
-                                    if (imageDTOs.get(i).getPublisher().equals(uids.get(j))) {
-                                        Feeds.add(imageDTOs.get(i));
-
+                                    if (answer.get(i).getPublisher().equals(uids.get(j))) {
+                                        Feeds.add(answer.get(i));
+                                        Log.d("checkdebug", "---------------------------------3팔로우하고 있는 피드를 보기위해 imageDto 참고하는데 feed에 저장된 publisher");
+                                        Log.d("checkdebug","image size  :"+imageDTOs.size()+"   uid size  :"+uids.size());
                                     }
                                 }
                             }
-                            imageDTOs=Feeds;
+                            Log.d("checkdebug","-----------------4순위 경쟁");
+                            imageDTOs = Feeds;
                             boardRecyclerViewAdapter.notifyDataSetChanged();
                         }
 
@@ -215,8 +240,6 @@ public class FeedFragment extends Fragment {
 
         return rootView;
     }
-
-
 
 
     class BoardRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements OnFeedItemClickListener {
