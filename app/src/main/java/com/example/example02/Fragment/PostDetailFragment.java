@@ -23,7 +23,6 @@ import android.widget.Toast;
 
 import com.bumptech.glide.request.RequestOptions;
 import com.example.example02.Activity.ProfileActivity;
-import com.example.example02.Adapter.CommentAdapter;
 import com.example.example02.GlideApp;
 import com.example.example02.Info.CommentInfo;
 import com.example.example02.Info.PostInfo;
@@ -71,6 +70,7 @@ public class PostDetailFragment extends Fragment {
     private ImageView removeButton;
 
     private List<CommentInfo> imageDTOs = new ArrayList<>();
+    private List<CommentInfo> result = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -103,7 +103,7 @@ public class PostDetailFragment extends Fragment {
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 1);
         recyclerView.setLayoutManager(layoutManager);
-        final CommentAdapter boardRecyclerViewAdapter = new CommentAdapter();
+        final BoardRecyclerViewAdapter boardRecyclerViewAdapter = new BoardRecyclerViewAdapter();
         recyclerView.setAdapter(boardRecyclerViewAdapter);
 
         boardRecyclerViewAdapter.setOnItemClickListener(new OnFeedItemClickListener() {
@@ -149,13 +149,12 @@ public class PostDetailFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 imageDTOs.clear();
-                boardRecyclerViewAdapter.clearResult();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     CommentInfo imageDTO = snapshot.getValue(CommentInfo.class);
                     imageDTOs.add(imageDTO);
                 }
                 for (int i = 0; i < imageDTOs.size(); i++) {
-                    boardRecyclerViewAdapter.addResult(imageDTOs.get(imageDTOs.size() - i - 1));
+                    result.add(imageDTOs.get(imageDTOs.size() - i - 1));
                 }
                 boardRecyclerViewAdapter.notifyDataSetChanged();
             }
@@ -255,5 +254,90 @@ public class PostDetailFragment extends Fragment {
 
     public void startToast(String msg) {
         Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+    }
+
+
+    class BoardRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements OnFeedItemClickListener {
+        OnFeedItemClickListener listener;
+
+        public CommentInfo getItem(int position) {
+            return result.get(position);
+        }
+
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.comment_item_view, parent, false);
+            return new BoardRecyclerViewAdapter.CustomViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
+            if (user.getUid().equals(result.get(position).getPublisher()))
+                ((CustomViewHolder) holder).removeImage.setImageResource(R.drawable.close_black);
+
+            ((CustomViewHolder) holder).comment.setText(result.get(position).getComment());
+            DocumentReference docRef = db.collection("users").document(result.get(position).getPublisher());
+            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document != null) {
+                            if (document.exists()) {
+                                String photoUrl = document.getData().get("photoUrl").toString();
+                                if (photoUrl != null)
+                                    GlideApp.with(holder.itemView.getContext()).asBitmap().load(photoUrl).apply(new RequestOptions().circleCrop()).
+                                            into(((CustomViewHolder) holder).profileImage);
+                                ((CustomViewHolder) holder).userName.setText(document.getData().get("name").toString());
+                            } else {
+                                Log.d(TAG, "No such document");
+                            }
+                        }
+                    } else {
+                        Log.d(TAG, "get failed with ", task.getException());
+                    }
+                }
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            return imageDTOs.size();
+        }
+
+        public void setOnItemClickListener(OnFeedItemClickListener listener) {
+            this.listener = listener;
+        }
+
+        @Override
+        public void onItemClick(RecyclerView.ViewHolder holder, View view, int position) {
+            if (listener != null) {
+                listener.onItemClick(holder, view, position);
+            }
+        }
+
+        private class CustomViewHolder extends RecyclerView.ViewHolder {
+            ImageView profileImage;
+            ImageView removeImage;
+            TextView userName;
+            TextView comment;
+
+            public CustomViewHolder(View view) {
+                super(view);
+                profileImage = (ImageView) view.findViewById(R.id.profileImage);
+                removeImage = (ImageView) view.findViewById(R.id.removeButton);
+                userName = (TextView) view.findViewById(R.id.userName);
+                comment = (TextView) view.findViewById(R.id.comment);
+                view.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int position = getAdapterPosition();
+                        if (listener != null) {
+                            listener.onItemClick(PostDetailFragment.BoardRecyclerViewAdapter.CustomViewHolder.this, v, position);
+                        }
+                    }
+                });
+            }
+        }
     }
 }
