@@ -51,6 +51,7 @@ public class DetailFeedFragment extends Fragment {
     ViewGroup rootView;
     FirebaseAuth auth;
     int detailposition;
+    ImageView backButton;
 
     final DetailFeedFragment.BoardRecyclerViewAdapter boardRecyclerViewAdapter = new BoardRecyclerViewAdapter();
     LinearLayoutManager layoutManager;
@@ -151,6 +152,7 @@ public class DetailFeedFragment extends Fragment {
         @Override
         public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
             database = FirebaseDatabase.getInstance();
+
             final FirebaseFirestore db = FirebaseFirestore.getInstance();
             Glide.with(holder.itemView.getContext()).load(imageDTOs.get(position).getPhotoUrl()).into(((CustomViewHolder) holder).postImage);
             ((CustomViewHolder) holder).description_text.setText(imageDTOs.get(position).getPostText());
@@ -218,6 +220,7 @@ public class DetailFeedFragment extends Fragment {
             public TextView description_text;
             public ImageView Like;
             public TextView LikeNum;
+            public ImageView backButton;
 
             public CustomViewHolder(View itemview) {
                 super(itemview);
@@ -227,6 +230,9 @@ public class DetailFeedFragment extends Fragment {
                 description_text = itemview.findViewById(R.id.description_text);
                 Like = itemview.findViewById(R.id.Like);
                 LikeNum=itemview.findViewById(R.id.LikeNum);
+                backButton=itemview.findViewById(R.id.backButton);
+                backButton.setVisibility(View.INVISIBLE);
+
 
 
 

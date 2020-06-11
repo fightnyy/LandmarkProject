@@ -322,12 +322,14 @@ public class PostDetailFragment extends Fragment {
             TextView userName;
             TextView comment;
 
+
             public CustomViewHolder(View view) {
                 super(view);
                 profileImage = (ImageView) view.findViewById(R.id.profileImage);
                 removeImage = (ImageView) view.findViewById(R.id.removeButton);
                 userName = (TextView) view.findViewById(R.id.userName);
                 comment = (TextView) view.findViewById(R.id.comment);
+
                 view.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
