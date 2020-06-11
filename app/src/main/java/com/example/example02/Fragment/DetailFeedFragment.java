@@ -55,8 +55,6 @@ public class DetailFeedFragment extends Fragment {
     final DetailFeedFragment.BoardRecyclerViewAdapter boardRecyclerViewAdapter = new BoardRecyclerViewAdapter();
     LinearLayoutManager layoutManager;
 
-
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,8 +91,6 @@ public class DetailFeedFragment extends Fragment {
 
             }
         });
-
-
 
         database.getReference().child("posts").addValueEventListener(new ValueEventListener() {
             @Override
@@ -137,16 +133,11 @@ public class DetailFeedFragment extends Fragment {
             return imageDTOs.get(position);
         }
 
-
-
-
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View itemview = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_post_detail, parent, false);
-
             return new CustomViewHolder(itemview);
         }
-
 
         @Override
         public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
@@ -163,17 +154,12 @@ public class DetailFeedFragment extends Fragment {
                 }
             });
 
-
-
-
             if (imageDTOs.get(position).stars.containsKey(auth.getCurrentUser().getUid())) {
                 ((CustomViewHolder) holder).Like.setImageResource(R.drawable.favorite);
             } else {
                 ((CustomViewHolder) holder).Like.setImageResource(R.drawable.favorite_border);
             }
             ((CustomViewHolder) holder).LikeNum.setText("좋아요"+imageDTOs.get(position).starCount+"개");
-
-
 
 
             DocumentReference docRef = db.collection("users").document(imageDTOs.get(position).getPublisher());
@@ -204,7 +190,6 @@ public class DetailFeedFragment extends Fragment {
             }
         };
 
-
         @Override
         public int getItemCount() {
             return imageDTOs.size();
@@ -227,10 +212,6 @@ public class DetailFeedFragment extends Fragment {
                 description_text = itemview.findViewById(R.id.description_text);
                 Like = itemview.findViewById(R.id.Like);
                 LikeNum=itemview.findViewById(R.id.LikeNum);
-
-
-
-
             }
         }
         private void onLikeClicked(DatabaseReference postRef) {

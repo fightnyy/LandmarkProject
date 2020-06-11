@@ -193,7 +193,6 @@ public class FeedFragment extends Fragment {
                             }
                             boardRecyclerViewAdapter.notifyDataSetChanged();
 
-
                         }
 
                         @Override

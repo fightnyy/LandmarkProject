@@ -10,10 +10,13 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,14 +25,19 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.example02.Activity.MapActivity;
 import com.example.example02.Activity.ProfileActivity;
+import com.example.example02.Adapter.CommentAdapter;
 import com.example.example02.GlideApp;
+import com.example.example02.Info.CommentInfo;
 import com.example.example02.Info.MapInfo;
 import com.example.example02.Info.PostInfo;
 import com.example.example02.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
@@ -40,6 +48,7 @@ import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class MapFeedFragment extends Fragment {
     private static final String TAG = "MapFeedFragment";
@@ -118,12 +127,13 @@ public class MapFeedFragment extends Fragment {
     }
 
     class MapPostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
+        private FirebaseDatabase database = FirebaseDatabase.getInstance();
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_post_detail, parent, false);
             return new MapPostAdapter.CustomViewHolder(view);
         }
+
 
         @Override
         public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int position) {
@@ -150,6 +160,52 @@ public class MapFeedFragment extends Fragment {
                 }
             });
 
+            ((MapFeedFragment.MapPostAdapter.CustomViewHolder)holder).comments.setOnTouchListener(new View.OnTouchListener(){
+                public boolean onTouch(View v, MotionEvent event) {
+                    switch(event.getAction()) {
+                        case MotionEvent.ACTION_DOWN: {
+                            ((MapFeedFragment.MapPostAdapter.CustomViewHolder)holder).recyclerView.setAdapter(((MapFeedFragment.MapPostAdapter.CustomViewHolder)holder).boardRecyclerViewAdapter);
+                            break;
+                        }
+                    }
+                    return false;
+                }
+            });
+
+            database.getReference().child("comments").child(result.get(position).getKey()).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    ((CustomViewHolder)holder).commentInfo.clear();
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        CommentInfo imageDTO = snapshot.getValue(CommentInfo.class);
+                        ((CustomViewHolder)holder).commentInfo.add(imageDTO);
+                    }
+                    for (int i = 0; i < imageDTOs.size(); i++) {
+                        ((CustomViewHolder)holder).boardRecyclerViewAdapter.addResult(((CustomViewHolder)holder).commentInfo.get(((CustomViewHolder)holder).commentInfo.size() - i - 1));
+                    }
+                    ((CustomViewHolder)holder).boardRecyclerViewAdapter.notifyDataSetChanged();
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            });
+
+            ((MapFeedFragment.MapPostAdapter.CustomViewHolder)holder).sendCommend.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DatabaseReference databaseReferenceComment = FirebaseDatabase.getInstance().getReference("comments");
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    String key = databaseReferenceComment.child("comments").child(result.get(position).getKey()).push().getKey();
+                    CommentInfo commentAdd = new CommentInfo(((CustomViewHolder)holder).comments.getText().toString(), user.getUid(), key);
+                    Map<String, Object> postValues = commentAdd.toMap();
+
+                    databaseReferenceComment.child(result.get(position).getKey()).child(key).setValue(postValues);
+                    startToast("댓글을 작성하였습니다.");
+                }
+            });
+
+
             DocumentReference docRef = db.collection("users").document(result.get(position).getPublisher());
                     docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
@@ -175,8 +231,6 @@ public class MapFeedFragment extends Fragment {
 
             if(result.get(position).getPostText() != null)
                 ((MapFeedFragment.MapPostAdapter.CustomViewHolder)holder).description_text.setText(result.get(position).getPostText());
-
-
         }
 
         @Override
@@ -189,13 +243,24 @@ public class MapFeedFragment extends Fragment {
             ImageView userImage;
             TextView userName;
             TextView description_text;
+            EditText comments;
+            RecyclerView recyclerView;
+            ImageView sendCommend;
+            GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 1);
+            final CommentAdapter boardRecyclerViewAdapter = new CommentAdapter();
+            private List<CommentInfo> commentInfo = new ArrayList<>();
 
-            public CustomViewHolder(View view) {
+            public CustomViewHolder(final View view) {
                 super(view);
                 userImage = (ImageView) view.findViewById(R.id.profileImage);
                 userName = (TextView) view.findViewById(R.id.userName);
                 imageView = (ImageView) view.findViewById(R.id.postImage);
                 description_text = (TextView) view.findViewById(R.id.description_text);
+                comments = (EditText) view.findViewById(R.id.commend);
+                recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+                sendCommend = (ImageView) view.findViewById(R.id.sendCommend);
+                recyclerView.setLayoutManager(layoutManager);
+
             }
         }
 
