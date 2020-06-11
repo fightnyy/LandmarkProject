@@ -175,13 +175,10 @@ public class MapFeedFragment extends Fragment {
             database.getReference().child("comments").child(result.get(position).getKey()).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    ((CustomViewHolder)holder).commentInfo.clear();
+                    ((CustomViewHolder)holder).boardRecyclerViewAdapter.clearResult();
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         CommentInfo imageDTO = snapshot.getValue(CommentInfo.class);
-                        ((CustomViewHolder)holder).commentInfo.add(imageDTO);
-                    }
-                    for (int i = 0; i < imageDTOs.size(); i++) {
-                        ((CustomViewHolder)holder).boardRecyclerViewAdapter.addResult(((CustomViewHolder)holder).commentInfo.get(((CustomViewHolder)holder).commentInfo.size() - i - 1));
+                        ((CustomViewHolder)holder).boardRecyclerViewAdapter.addResult(imageDTO);
                     }
                     ((CustomViewHolder)holder).boardRecyclerViewAdapter.notifyDataSetChanged();
                 }

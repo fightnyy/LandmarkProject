@@ -149,6 +149,7 @@ public class PostDetailFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 imageDTOs.clear();
+                boardRecyclerViewAdapter.clearResult();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     CommentInfo imageDTO = snapshot.getValue(CommentInfo.class);
                     imageDTOs.add(imageDTO);

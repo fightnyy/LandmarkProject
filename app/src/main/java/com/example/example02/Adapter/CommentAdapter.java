@@ -35,6 +35,10 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         result.add(comment);
     }
 
+    public void clearResult(){
+        result.clear();
+    }
+
     public CommentInfo getItem(int position) {
         return result.get(position);
     }
