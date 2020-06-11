@@ -1,3 +1,4 @@
+
 package com.example.example02.Fragment;
 
 import android.content.Intent;
@@ -12,8 +13,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,15 +25,22 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.example02.Activity.MapActivity;
 import com.example.example02.Activity.ProfileActivity;
+import com.example.example02.Adapter.CommentAdapter;
 import com.example.example02.GlideApp;
+import com.example.example02.Info.CommentInfo;
 import com.example.example02.Info.MapInfo;
 import com.example.example02.Info.PostInfo;
 import com.example.example02.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -40,6 +50,7 @@ import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class MapFeedFragment extends Fragment {
     private static final String TAG = "MapFeedFragment";
@@ -48,14 +59,17 @@ public class MapFeedFragment extends Fragment {
 
     private List<PostInfo> imageDTOs = new ArrayList<>();
     private List<PostInfo> result = new ArrayList<>();
+    private List<String> uidlist = new ArrayList<>();
 
     private MapInfo map;
     private TextView areaName;
+    private FirebaseAuth auth = FirebaseAuth.getInstance();
+    ;
+    final FirebaseDatabase database = FirebaseDatabase.getInstance();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         map = (MapInfo) ((MapActivity) getActivity()).getMapInfo(((MapActivity) getActivity()).getCheckPositionNum());
     }
 
@@ -65,7 +79,6 @@ public class MapFeedFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map_feed, null);
 
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
 
         areaName = (TextView) view.findViewById(R.id.areaName);
         view.findViewById(R.id.backButton).setOnClickListener(onClickListener);
@@ -86,14 +99,30 @@ public class MapFeedFragment extends Fragment {
                     PostInfo imageDTO = snapshot.getValue(PostInfo.class);
                     imageDTOs.add(imageDTO);
                 }
-                for(int i = 0; i < imageDTOs.size(); i++) {
+                for (int i = 0; i < imageDTOs.size(); i++) {
                     result.add(imageDTOs.get(imageDTOs.size() - i - 1));
                     Log.d(TAG, imageDTOs.get(i).getPhotoUrl());
                 }
                 mapPostAdapter.notifyDataSetChanged();
-        }
+            }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+        database.getReference().child("posts").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                uidlist.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String uidkey = snapshot.getKey();
+                    uidlist.add(uidkey);
+                }
+                mapPostAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
 
@@ -119,20 +148,29 @@ public class MapFeedFragment extends Fragment {
 
     class MapPostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_post_detail, parent, false);
+
             return new MapPostAdapter.CustomViewHolder(view);
         }
 
         @Override
         public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int position) {
             Glide.with(holder.itemView.getContext()).load(result.get(position).getPhotoUrl()).
-                    into(((MapFeedFragment.MapPostAdapter.CustomViewHolder)holder).imageView);
+                    into(((MapFeedFragment.MapPostAdapter.CustomViewHolder) holder).imageView);
 
             final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-            ((MapFeedFragment.MapPostAdapter.CustomViewHolder)holder).userImage.setOnClickListener(new View.OnClickListener() {
+            ((CustomViewHolder) holder).Like.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onLikeClicked(database.getReference().child("posts").child(uidlist.get(position)));
+                    Log.d("onclickhere", "클릭은 되었다."+position);
+                }
+            });
+            ((MapFeedFragment.MapPostAdapter.CustomViewHolder) holder).userImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(getContext(), ProfileActivity.class);
@@ -140,41 +178,89 @@ public class MapFeedFragment extends Fragment {
                     startActivity(intent);
                 }
             });
+            ((MapFeedFragment.MapPostAdapter.CustomViewHolder) holder).LikeNum.setText("좋아요"+imageDTOs.get(position).starCount+"개");
 
-            ((MapFeedFragment.MapPostAdapter.CustomViewHolder)holder).userName.setOnClickListener(new View.OnClickListener() {
+            ((MapFeedFragment.MapPostAdapter.CustomViewHolder) holder).userName.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(getContext(), ProfileActivity.class);
                     intent.putExtra("user", result.get(position).getPublisher());
                     startActivity(intent);
+                }
+            });
+            if (imageDTOs.get(position).stars.containsKey(auth.getCurrentUser().getUid())) {
+                ((MapFeedFragment.MapPostAdapter.CustomViewHolder) holder).Like.setImageResource(R.drawable.favorite);
+            } else {
+                ((MapFeedFragment.MapPostAdapter.CustomViewHolder) holder).Like.setImageResource(R.drawable.favorite_border);
+            }
+
+            database.getReference().child("comments").child(result.get(position).getKey()).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    ((CustomViewHolder)holder).boardRecyclerViewAdapter.clearResult();
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        CommentInfo imageDTO = snapshot.getValue(CommentInfo.class);
+                        ((CustomViewHolder)holder).boardRecyclerViewAdapter.addResult(imageDTO);
+                    }
+                    ((CustomViewHolder)holder).boardRecyclerViewAdapter.notifyDataSetChanged();
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            });
+
+            ((MapFeedFragment.MapPostAdapter.CustomViewHolder)holder).sendCommend.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DatabaseReference databaseReferenceComment = FirebaseDatabase.getInstance().getReference("comments");
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    String key = databaseReferenceComment.child("comments").child(result.get(position).getKey()).push().getKey();
+                    CommentInfo commentAdd = new CommentInfo(((CustomViewHolder)holder).comments.getText().toString(), user.getUid(), key);
+                    Map<String, Object> postValues = commentAdd.toMap();
+
+                    databaseReferenceComment.child(result.get(position).getKey()).child(key).setValue(postValues);
+                    startToast("댓글을 작성하였습니다.");
+                }
+            });
+
+            ((MapFeedFragment.MapPostAdapter.CustomViewHolder)holder).comments.setOnTouchListener(new View.OnTouchListener(){
+                public boolean onTouch(View v, MotionEvent event) {
+                    switch(event.getAction()) {
+                        case MotionEvent.ACTION_DOWN: {
+                            ((MapFeedFragment.MapPostAdapter.CustomViewHolder)holder).recyclerView.setAdapter(((MapFeedFragment.MapPostAdapter.CustomViewHolder)holder).boardRecyclerViewAdapter);
+                            break;
+                        }
+                    }
+                    return false;
                 }
             });
 
             DocumentReference docRef = db.collection("users").document(result.get(position).getPublisher());
-                    docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if (task.isSuccessful()) {
-                                DocumentSnapshot document = task.getResult();
-                                if (document != null) {
-                                    if (document.exists()) {
-                                        String photoUrl = document.getData().get("photoUrl").toString();
-                                        if(photoUrl != null)
-                                            GlideApp.with(holder.itemView.getContext()).asBitmap().load(photoUrl).apply(new RequestOptions().circleCrop()).
-                                                    into(((MapFeedFragment.MapPostAdapter.CustomViewHolder)holder).userImage);
-                                        ((MapFeedFragment.MapPostAdapter.CustomViewHolder)holder).userName.setText(document.getData().get("name").toString());
-                                    } else {
-                                        Log.d(TAG, "No such document");
-                                    }
-                                }
+            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document != null) {
+                            if (document.exists()) {
+                                String photoUrl = document.getData().get("photoUrl").toString();
+                                if (photoUrl != null)
+                                    GlideApp.with(holder.itemView.getContext()).asBitmap().load(photoUrl).apply(new RequestOptions().circleCrop()).
+                                            into(((MapFeedFragment.MapPostAdapter.CustomViewHolder) holder).userImage);
+                                ((MapFeedFragment.MapPostAdapter.CustomViewHolder) holder).userName.setText(document.getData().get("name").toString());
                             } else {
-                                Log.d(TAG, "get failed with ", task.getException());
+                                Log.d(TAG, "No such document");
                             }
+                        }
+                    } else {
+                        Log.d(TAG, "get failed with ", task.getException());
+                    }
                 }
             });
 
-            if(result.get(position).getPostText() != null)
-                ((MapFeedFragment.MapPostAdapter.CustomViewHolder)holder).description_text.setText(result.get(position).getPostText());
+            if (result.get(position).getPostText() != null)
+                ((MapFeedFragment.MapPostAdapter.CustomViewHolder) holder).description_text.setText(result.get(position).getPostText());
 
 
         }
@@ -189,6 +275,13 @@ public class MapFeedFragment extends Fragment {
             ImageView userImage;
             TextView userName;
             TextView description_text;
+            ImageView Like;
+            TextView LikeNum;
+            EditText comments;
+            RecyclerView recyclerView;
+            ImageView sendCommend;
+            GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 1);
+            final CommentAdapter boardRecyclerViewAdapter = new CommentAdapter();
 
             public CustomViewHolder(View view) {
                 super(view);
@@ -196,9 +289,39 @@ public class MapFeedFragment extends Fragment {
                 userName = (TextView) view.findViewById(R.id.userName);
                 imageView = (ImageView) view.findViewById(R.id.postImage);
                 description_text = (TextView) view.findViewById(R.id.description_text);
+                Like = view.findViewById(R.id.Like);
+                LikeNum = view.findViewById(R.id.LikeNum);
+                comments = (EditText) view.findViewById(R.id.commend);
+                recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+                sendCommend = (ImageView) view.findViewById(R.id.sendCommend);
+                recyclerView.setLayoutManager(layoutManager);
             }
         }
 
+        private void onLikeClicked(DatabaseReference postRef) {
+            postRef.runTransaction(new Transaction.Handler() {
+                @Override
+                public Transaction.Result doTransaction(MutableData mutableData) {
+                    PostInfo p = mutableData.getValue(PostInfo.class);
+                    if (p == null) {
+                        return Transaction.success(mutableData);
+                    }
+                    if (p.stars.containsKey(auth.getCurrentUser().getUid())) {
+                        p.starCount = p.starCount - 1;
+                        p.stars.remove(auth.getCurrentUser().getUid());
+                    } else {
+                        p.starCount = p.starCount + 1;
+                        p.stars.put(auth.getCurrentUser().getUid(), true);
+                    }
+                    mutableData.setValue(p);
+                    return Transaction.success(mutableData);
+                }
+
+                @Override
+                public void onComplete(DatabaseError databaseError, boolean b,
+                                       DataSnapshot dataSnapshot) {
+                }
+            });
+        }
     }
 }
-
