@@ -218,6 +218,7 @@ public class DetailFeedFragment extends Fragment {
             public TextView description_text;
             public ImageView Like;
             public TextView LikeNum;
+            ImageView backButton;
 
             public CustomViewHolder(View itemview) {
                 super(itemview);
@@ -227,6 +228,8 @@ public class DetailFeedFragment extends Fragment {
                 description_text = itemview.findViewById(R.id.description_text);
                 Like = itemview.findViewById(R.id.Like);
                 LikeNum=itemview.findViewById(R.id.LikeNum);
+                backButton=itemview.findViewById(R.id.backButton);
+                backButton.setVisibility(View.INVISIBLE);
 
 
 

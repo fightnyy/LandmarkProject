@@ -36,7 +36,7 @@ public class LoginActivity extends BasisActivity {
     private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
     SignInButton signInButton;
-    private ProgressBar mProgressBar;
+    private com.github.ybq.android.spinkit.SpinKitView progressBar;
 
 
     @Override
@@ -50,9 +50,9 @@ public class LoginActivity extends BasisActivity {
         findViewById(R.id.resetButton).setOnClickListener(onClickListener);
         signInButton=findViewById(R.id.googlelogin);
         signInButton.setOnClickListener(onClickListener);
-        mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBar =  findViewById(R.id.progress_bar);
 
-        mProgressBar.setVisibility(View.GONE);
+        progressBar.setVisibility(View.GONE);
 
 
         // [START config_signin]
@@ -75,7 +75,7 @@ public class LoginActivity extends BasisActivity {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.loginButton:
-                    mProgressBar.setVisibility(View.VISIBLE);
+                    progressBar.setVisibility(View.VISIBLE);
                     login();
                     break;
                 case R.id.registerButton:
@@ -115,11 +115,11 @@ public class LoginActivity extends BasisActivity {
 
                                 FirebaseUser user = mAuth.getCurrentUser();
                                 startToast("로그인에 성공하였습니다.");
-                                mProgressBar.setVisibility(View.GONE);
+                                progressBar.setVisibility(View.GONE);
                                 myStartActivity(MainActivity.class);
                             } else {
                                 if (task.getException() != null)
-                                    mProgressBar.setVisibility(View.GONE);
+                                    progressBar.setVisibility(View.GONE);
                                     startToast(task.getException().toString());
                             }
                         }

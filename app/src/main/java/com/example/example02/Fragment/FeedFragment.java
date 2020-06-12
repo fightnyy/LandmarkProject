@@ -43,6 +43,7 @@ public class FeedFragment extends Fragment {
     private List<PostInfo> answer=new ArrayList<>();
     private List<String> photoanswer=new ArrayList<>();
     private int flag=0;
+    private com.github.ybq.android.spinkit.SpinKitView spinkit;
 
 
     private FirebaseDatabase database;
@@ -125,6 +126,7 @@ public class FeedFragment extends Fragment {
 
 
         btn_toggle = rootView.findViewById(R.id.btn_toggle);
+        spinkit=rootView.findViewById(R.id.spin_kit);
 
 
         final String uid = user.getUid();
@@ -252,7 +254,7 @@ public class FeedFragment extends Fragment {
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_feed_list, parent, false);
-
+            spinkit.setVisibility(View.GONE);
             return new CustomViewHolder(view, listener);
         }
 

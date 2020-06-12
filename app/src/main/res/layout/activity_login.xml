@@ -111,12 +111,15 @@
 
 
         </LinearLayout>
-        <ProgressBar
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:id="@+id/progressBar"
-            android:layout_centerInParent="true"/>
-
+        <com.github.ybq.android.spinkit.SpinKitView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:visibility="visible"
+            android:id="@+id/progress_bar"
+           android:layout_centerInParent="true"
+            style="@style/SpinKitView.Large.ChasingDots"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:SpinKit_Color="@color/colorPrimary" />
 
 
     </RelativeLayout>
