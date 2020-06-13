@@ -23,7 +23,7 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="#40FFFFFF">
+                    >
 
                     <RelativeLayout
                         android:id="@+id/relLayout"
@@ -49,7 +49,7 @@
                             android:layout_toRightOf="@+id/profileImage"
                             android:textAppearance="?android:attr/textAppearanceSmall"
                             android:textColor="@color/black"
-                            android:textSize="19dp" />
+                            android:textSize="15dp" />
 
                         <ImageView
                             android:id="@+id/removeButton"
@@ -98,9 +98,8 @@
                         android:id="@+id/relLayout03"
                         android:layout_width="match_parent"
                         android:layout_height="30dp"
-                        android:alpha="0.5"
                         android:layout_below="@+id/postImage"
-                        android:background="@drawable/white_grey_border_bottom">
+                        >
 
 
                         <EditText
@@ -167,7 +166,8 @@
                             android:layout_margin="10dp"
                             android:background="@drawable/commend_radius"
                             android:hint="   commend..."
-                            android:textSize="18dp" />
+                            android:padding="7dp"
+                            android:textSize="13dp" />
 
                         <ImageView
                             android:id="@+id/sendCommend"

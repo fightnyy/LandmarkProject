@@ -17,8 +17,10 @@
                 android:id="@+id/feed_image"
                 android:layout_width="130dp"
                 android:layout_height="130dp"
-                android:padding="5dp"
-                android:layout_margin="5dp"
+                android:paddingRight="0dp"
+                android:paddingBottom="3dp"
+                android:paddingTop="3dp"
+
                 android:scaleType="centerCrop"/>
 
         </LinearLayout>

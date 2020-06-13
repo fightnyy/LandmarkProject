@@ -54,6 +54,11 @@ public class FeedFragment extends Fragment {
     private List<String> uids = new ArrayList<>();
     int a=0;
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        spinkit.setVisibility(View.GONE);
+    }
 
     @Nullable
     @Override

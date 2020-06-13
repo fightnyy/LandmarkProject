@@ -44,11 +44,12 @@
                 android:layout_width="280dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="20dp"
                 android:background="@drawable/radius"
                 android:drawableStart="@drawable/ic_person_outline_black_24dp"
                 android:drawableLeft="@drawable/ic_person_outline_black_24dp"
                 android:hint="Email"
+                android:textSize="15dp"
                 android:padding="10dp"
                 android:textColor="@color/address"
                 android:textColorHint="#758A8D" />
@@ -61,10 +62,11 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="10dp"
+                android:textSize="14dp"
                 android:background="@drawable/radius"
                 android:drawableStart="@drawable/ic_lock_outline_black_24dp"
                 android:drawableLeft="@drawable/ic_lock_outline_black_24dp"
-                android:hint="PASSWORD"
+                android:hint="Password"
                 android:selectAllOnFocus="true"
                 android:inputType="textPassword"
                 android:padding="10dp"
@@ -73,10 +75,10 @@
 
             <Button
                 android:id="@+id/loginButton"
-                android:layout_width="280dp"
+                android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="40dp"
                 android:background="@color/colorPrimaryDark"
                 android:text="Login"
                 android:textColor="#FFFFFF"
@@ -85,7 +87,7 @@
 
             <com.google.android.gms.common.SignInButton
                 android:id="@+id/googlelogin"
-                android:layout_width="290dp"
+                android:layout_width="210dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginStart="3dp"
@@ -95,9 +97,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="20dp"
                 android:text="register"
-                android:textSize="18dp" />
+                android:textSize="13dp" />
 
             <TextView
                 android:id="@+id/resetButton"
@@ -106,7 +108,7 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="10dp"
                 android:text="password reset"
-                android:textSize="18dp" />
+                android:textSize="13dp" />
 
 
 

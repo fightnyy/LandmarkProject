@@ -42,7 +42,6 @@ public class RequestActivity extends AppCompatActivity
     private DatabaseReference mDatabase;// ...
 
     String location;
-    String detailLocation;
     String Reason;
     String publisher;
 
@@ -57,7 +56,6 @@ public class RequestActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_request);
         final TextView tmplocation=(TextView)findViewById(R.id.textview);
-        final TextView tmpdetaillocation=findViewById(R.id.detailLocation);
         final TextView tmpReason=findViewById(R.id.reason);
 
 
@@ -96,15 +94,14 @@ public class RequestActivity extends AppCompatActivity
             public void onClick(View arg0) {
 //                publisher = auth.getCurrentUser().getUid().toString();
                 location = tmplocation.getText().toString();
-                detailLocation = tmpdetaillocation.getText().toString();
                 Reason = tmpReason.getText().toString();
 
-                if(Reason.length()==0||detailLocation.length()==0)
+                if(Reason.length()==0)
                 {
                     Toast.makeText(getApplicationContext(),"빈칸 없이 진행해주세요",Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    RequestInfo a = new RequestInfo(location, detailLocation, Reason, user.getEmail());
+                    RequestInfo a = new RequestInfo(location, Reason, user.getEmail());
                     mDatabase.child("Request").push().setValue(a);
                     Toast.makeText(getApplicationContext(), "소중한 의견 감사합니다.", Toast.LENGTH_SHORT).show();
                     finish();
