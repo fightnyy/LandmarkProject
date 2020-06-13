@@ -114,6 +114,7 @@ public class ProfileFragment extends Fragment {
                             tv_email.setText(user.getEmail());
                         } else {
                             Log.d(TAG, "No such document");
+                            startToast("회원 정보를 등록해 주세요");
                             profileSetting();
                             FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                             fragmentManager.beginTransaction().remove(ProfileFragment.this).commit();
@@ -194,7 +195,6 @@ public class ProfileFragment extends Fragment {
                     if (userUid.equals(user.getUid())) {
 
                     } else {
-
                         builder = new AlertDialog.Builder(getContext());
                         builder.setTitle("팔로우");
                         builder.setMessage("팔로우 하시겠습니까?" + "\n" + "이미 팔로우 되어있다면 팔로우가 취소됩니다.");
@@ -208,7 +208,6 @@ public class ProfileFragment extends Fragment {
                         builder.setNegativeButton("아니오", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-
                             }
                         });
                         dialog = builder.create();

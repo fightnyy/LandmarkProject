@@ -83,7 +83,7 @@ public class WritingActivity extends BasisActivity {
                         if (document.exists()) {
                         } else {
                             stratProfileActiviy();
-                            startToast("게시글을 작성하기 전에 회원정보를 등록하여 주세요");
+                            startToast("게시글을 작성하기 전에" + "\n" + "회원정보를 등록하여 주세요");
                             finish();
                         }
                     }
