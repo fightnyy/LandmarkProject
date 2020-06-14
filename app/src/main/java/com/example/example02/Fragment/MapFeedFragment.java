@@ -81,11 +81,8 @@ public class MapFeedFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map_feed, null);
 
-
         areaName = (TextView) view.findViewById(R.id.areaName);
         view.findViewById(R.id.backButton).setOnClickListener(onClickListener);
-
-
 
         final MapPostAdapter mapPostAdapter = new MapPostAdapter();
         final Comparator<PostInfo> salesComparator = new Comparator<PostInfo>() {
@@ -111,25 +108,11 @@ public class MapFeedFragment extends Fragment {
             public void onCancelled(DatabaseError databaseError) {
             }
         });
+
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 1);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(mapPostAdapter);
-        database.getReference().child("posts").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                uidlist.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    String uidkey = snapshot.getKey();
-                    uidlist.add(uidkey);
-                }
-                mapPostAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        });
 
         areaName.setText(map.getName());
         return view;
@@ -171,7 +154,7 @@ public class MapFeedFragment extends Fragment {
             ((CustomViewHolder) holder).Like.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    onLikeClicked(database.getReference().child("posts").child(uidlist.get(position)));
+                    onLikeClicked(database.getReference().child("posts").child(imageDTOs.get(position).getKey()));
                     Log.d("onclickhere", "클릭은 되었다."+position);
                 }
             });

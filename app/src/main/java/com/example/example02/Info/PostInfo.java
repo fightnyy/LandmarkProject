@@ -53,7 +53,7 @@ public class PostInfo{
 
     public String getKey() { return this.key; }
 
-    public Date getCreatedAt(){ return getCreatedAt(); }
+    //public Date getCreatedAt(){ return getCreatedAt(); }
 
     public int getStarCount() { return this.starCount; }
 

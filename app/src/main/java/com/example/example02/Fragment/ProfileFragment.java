@@ -123,12 +123,12 @@ public class ProfileFragment extends Fragment {
                 }
             }
         });
-        final Comparator<PostInfo> salesComparator = new Comparator<PostInfo>() {
+        /*final Comparator<PostInfo> salesComparator = new Comparator<PostInfo>() {
             @Override
             public int compare(PostInfo o1, PostInfo o2) {
                 return o2.getCreatedAt().compareTo(o1.getCreatedAt());
             }
-        };
+        };*/
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
