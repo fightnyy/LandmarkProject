@@ -37,6 +37,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -71,12 +73,16 @@ public class PostDetailFragment extends Fragment {
     private View view;
     private ImageView changeButton;
     private ImageView removeButton;
+    FirebaseAuth auth;
+    ImageView Like;
+    TextView LikeNum;
 
     private List<CommentInfo> imageDTOs = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        auth = FirebaseAuth.getInstance();
     }
 
     @Nullable
@@ -84,6 +90,9 @@ public class PostDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_post_detail, null);
+
+
+
 
         view.findViewById(R.id.backButton).setOnClickListener(onClickListener);
         view.findViewById(R.id.sendCommend).setOnClickListener(onClickListener);
@@ -102,6 +111,19 @@ public class PostDetailFragment extends Fragment {
         GlideApp.with(getActivity()).asBitmap().load(item.getPhotoUrl()).into(Image);
         userText.setText(item.getPostText());
 
+
+        LikeNum=view.findViewById(R.id.LikeNum);
+        LikeNum.setText("좋아요"+item.starCount+"개");
+        Like=view.findViewById(R.id.Like);
+
+        Like.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                onLikeClicked(database.getReference().child("posts"));
+                Log.d("thisis","클릭됨");
+            }
+        });
+
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 1);
         recyclerView.setLayoutManager(layoutManager);
@@ -115,6 +137,12 @@ public class PostDetailFragment extends Fragment {
                 startToast("아이템선택됨" + comment.getComment());
             }
         });
+
+        if (item.stars.containsKey(auth.getCurrentUser().getUid())) {
+            Like.setImageResource(R.drawable.favorite);
+        } else {
+            Like.setImageResource(R.drawable.favorite_border);
+        }
 
         if(user.getUid().equals(item.getPublisher())){
             changeButton = (ImageView) view.findViewById(R.id.changeButton);
@@ -254,6 +282,34 @@ public class PostDetailFragment extends Fragment {
 
     public void startToast(String msg) {
         Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+    }
+
+
+
+    private void onLikeClicked(DatabaseReference postRef) {
+        postRef.runTransaction(new Transaction.Handler() {
+            @Override
+            public Transaction.Result doTransaction(MutableData mutableData) {
+                PostInfo p = mutableData.getValue(PostInfo.class);
+                if (p == null) {
+                    return Transaction.success(mutableData);
+                }
+                if (p.stars.containsKey(auth.getCurrentUser().getUid())) {
+                    p.starCount = p.starCount - 1;
+                    p.stars.remove(auth.getCurrentUser().getUid());
+                } else {
+                    p.starCount = p.starCount + 1;
+                    p.stars.put(auth.getCurrentUser().getUid(), true);
+                }
+                mutableData.setValue(p);
+                return Transaction.success(mutableData);
+            }
+
+            @Override
+            public void onComplete(DatabaseError databaseError, boolean b,
+                                   DataSnapshot dataSnapshot) {
+            }
+        });
     }
 
 
