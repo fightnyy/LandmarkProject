@@ -22,6 +22,7 @@ public class CommentInfo {
 
     public String getComment(){ return this.comment; }
     public String getPublisher() { return this.publisher; }
+    public String getKey() { return this.key; }
 
     @Exclude
     public Map<String, Object> toMap() {

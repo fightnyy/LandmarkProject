@@ -13,14 +13,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.example02.Adapter.CommentAdapter;
 import com.example.example02.GlideApp;
+import com.example.example02.Info.CommentInfo;
 import com.example.example02.Info.PostInfo;
 import com.example.example02.R;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -40,6 +45,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 public class DetailFeedFragment extends Fragment {
@@ -130,6 +136,9 @@ public class DetailFeedFragment extends Fragment {
         }, 100);
     }
 
+    private void startToast(String msg) {
+        Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+    }
 
 
     class BoardRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -148,8 +157,10 @@ public class DetailFeedFragment extends Fragment {
         }
 
 
+
         @Override
         public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
+            ((CustomViewHolder)holder).boardRecyclerViewAdapter = new CommentAdapter(imageDTOs.get(position).getKey());
             database = FirebaseDatabase.getInstance();
             final FirebaseFirestore db = FirebaseFirestore.getInstance();
             Glide.with(holder.itemView.getContext()).load(imageDTOs.get(position).getPhotoUrl()).into(((CustomViewHolder) holder).postImage);
@@ -173,7 +184,51 @@ public class DetailFeedFragment extends Fragment {
             }
             ((CustomViewHolder) holder).LikeNum.setText("좋아요"+imageDTOs.get(position).starCount+"개");
 
+            database.getReference().child("comments").child(imageDTOs.get(position).getKey()).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    ((CustomViewHolder)holder).boardRecyclerViewAdapter.clearResult();
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        CommentInfo imageDTO = snapshot.getValue(CommentInfo.class);
+                        ((CustomViewHolder)holder).boardRecyclerViewAdapter.addResult(imageDTO);
+                    }
+                    ((CustomViewHolder)holder).boardRecyclerViewAdapter.notifyDataSetChanged();
+                }
 
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            });
+
+
+            ((CustomViewHolder)holder).comments.setOnTouchListener(new View.OnTouchListener(){
+                public boolean onTouch(View v, MotionEvent event) {
+                    switch(event.getAction()) {
+                        case MotionEvent.ACTION_DOWN: {
+                            if(!((CustomViewHolder)holder).checkComment) {
+                                ((CustomViewHolder) holder).recyclerView.setAdapter(((CustomViewHolder) holder).boardRecyclerViewAdapter);
+                                ((CustomViewHolder)holder).checkComment = !((CustomViewHolder)holder).checkComment;
+                            }
+                            break;
+                        }
+                    }
+                    return false;
+                }
+            });
+
+            ((CustomViewHolder)holder).sendCommend.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DatabaseReference databaseReferenceComment = FirebaseDatabase.getInstance().getReference("comments");
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    String key = databaseReferenceComment.child("comments").child(imageDTOs.get(position).getKey()).push().getKey();
+                    CommentInfo commentAdd = new CommentInfo(((CustomViewHolder)holder).comments.getText().toString(), user.getUid(), key);
+                    Map<String, Object> postValues = commentAdd.toMap();
+
+                    databaseReferenceComment.child(imageDTOs.get(position).getKey()).child(key).setValue(postValues);
+                    startToast("댓글을 작성하였습니다.");
+                }
+            });
 
 
             DocumentReference docRef = db.collection("users").document(imageDTOs.get(position).getPublisher());
@@ -219,6 +274,12 @@ public class DetailFeedFragment extends Fragment {
             public ImageView Like;
             public TextView LikeNum;
             ImageView backButton;
+            EditText comments;
+            RecyclerView recyclerView;
+            ImageView sendCommend;
+            GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 1);
+            CommentAdapter boardRecyclerViewAdapter;
+            boolean checkComment = false;
 
             public CustomViewHolder(View itemview) {
                 super(itemview);
@@ -230,6 +291,10 @@ public class DetailFeedFragment extends Fragment {
                 LikeNum=itemview.findViewById(R.id.LikeNum);
                 backButton=itemview.findViewById(R.id.backButton);
                 backButton.setVisibility(View.INVISIBLE);
+                comments = (EditText) itemview.findViewById(R.id.commend);
+                recyclerView = (RecyclerView) itemview.findViewById(R.id.recyclerView);
+                sendCommend = (ImageView) itemview.findViewById(R.id.sendCommend);
+                recyclerView.setLayoutManager(layoutManager);
 
 
 

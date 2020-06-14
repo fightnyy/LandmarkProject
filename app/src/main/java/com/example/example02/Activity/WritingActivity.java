@@ -30,6 +30,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -67,6 +70,28 @@ public class WritingActivity extends BasisActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_writing);
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        DocumentReference docRef = db.collection("users").document(user.getUid());
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document != null) {
+                        if (document.exists()) {
+                        } else {
+                            stratProfileActiviy();
+                            startToast("게시글을 작성하기 전에" + "\n" + "회원정보를 등록하여 주세요");
+                            finish();
+                        }
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
 
         tedPermission();
         startSettingImage();
@@ -151,6 +176,12 @@ public class WritingActivity extends BasisActivity {
         }
     }
 
+    private void stratProfileActiviy(){
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        Intent intent = new Intent(this, ProfileActivity.class);
+        intent.putExtra("user", user.getUid());
+        startActivity(intent);
+    }
 
     private void startLocationSelection(){
         getSupportFragmentManager().beginTransaction().replace(R.id.container, LSF).commit();
@@ -302,9 +333,5 @@ public class WritingActivity extends BasisActivity {
      */
     public static boolean isMediaDocument(Uri uri) {
         return "com.android.providers.media.documents".equals(uri.getAuthority());
-    }
-
-    public void makeToast(String msg) {
-        Toast.makeText(this, "게시글 등록을 " + msg + "하였습니다.", Toast.LENGTH_SHORT).show();
     }
 }

@@ -1,5 +1,7 @@
 package com.example.example02.Adapter;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +20,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -29,7 +33,13 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     OnFeedItemClickListener listener;
     private List<CommentInfo> result = new ArrayList<>();
     private final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private String postKey;
+
+    public CommentAdapter(){ }
+    public CommentAdapter(String key) {
+        this.postKey = key;
+    }
 
     public void addResult(CommentInfo comment){
         result.add(comment);
@@ -50,9 +60,16 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
-        if (user.getUid().equals(result.get(position).getPublisher()))
-            ((CustomViewHolder) holder).removeImage.setImageResource(R.drawable.close_black);
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
+        if (user.getUid().equals(result.get(position).getPublisher())) {
+            ((CustomViewHolder)holder).removeImage.setImageResource(R.drawable.close_black);
+            ((CustomViewHolder)holder).removeImage.setOnClickListener(new View.OnClickListener(){
+                public void onClick(View v) {
+                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+                    databaseReference.child("comments").child(postKey).child(result.get(position).getKey()).removeValue();
+                }
+            });
+        }
 
         ((CustomViewHolder) holder).comment.setText(result.get(position).getComment());
         DocumentReference docRef = db.collection("users").document(result.get(position).getPublisher());

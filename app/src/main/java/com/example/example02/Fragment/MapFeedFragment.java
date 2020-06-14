@@ -153,13 +153,14 @@ public class MapFeedFragment extends Fragment {
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_post_detail, parent, false);
 
-            return new MapPostAdapter.CustomViewHolder(view);
+            return new CustomViewHolder(view);
         }
 
         @Override
         public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int position) {
+            ((CustomViewHolder) holder).boardRecyclerViewAdapter = new CommentAdapter(result.get(position).getKey());
             Glide.with(holder.itemView.getContext()).load(result.get(position).getPhotoUrl()).
-                    into(((MapFeedFragment.MapPostAdapter.CustomViewHolder) holder).imageView);
+                    into(((CustomViewHolder) holder).imageView);
 
             final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -170,7 +171,7 @@ public class MapFeedFragment extends Fragment {
                     Log.d("onclickhere", "클릭은 되었다."+position);
                 }
             });
-            ((MapFeedFragment.MapPostAdapter.CustomViewHolder) holder).userImage.setOnClickListener(new View.OnClickListener() {
+            ((CustomViewHolder) holder).userImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(getContext(), ProfileActivity.class);
@@ -178,9 +179,9 @@ public class MapFeedFragment extends Fragment {
                     startActivity(intent);
                 }
             });
-            ((MapFeedFragment.MapPostAdapter.CustomViewHolder) holder).LikeNum.setText("좋아요"+imageDTOs.get(position).starCount+"개");
+            ((CustomViewHolder) holder).LikeNum.setText("좋아요"+imageDTOs.get(position).starCount+"개");
 
-            ((MapFeedFragment.MapPostAdapter.CustomViewHolder) holder).userName.setOnClickListener(new View.OnClickListener() {
+            ((CustomViewHolder) holder).userName.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(getContext(), ProfileActivity.class);
@@ -189,9 +190,9 @@ public class MapFeedFragment extends Fragment {
                 }
             });
             if (imageDTOs.get(position).stars.containsKey(auth.getCurrentUser().getUid())) {
-                ((MapFeedFragment.MapPostAdapter.CustomViewHolder) holder).Like.setImageResource(R.drawable.favorite);
+                ((CustomViewHolder) holder).Like.setImageResource(R.drawable.favorite);
             } else {
-                ((MapFeedFragment.MapPostAdapter.CustomViewHolder) holder).Like.setImageResource(R.drawable.favorite_border);
+                ((CustomViewHolder) holder).Like.setImageResource(R.drawable.favorite_border);
             }
 
             database.getReference().child("comments").child(result.get(position).getKey()).addValueEventListener(new ValueEventListener() {
@@ -210,7 +211,7 @@ public class MapFeedFragment extends Fragment {
                 }
             });
 
-            ((MapFeedFragment.MapPostAdapter.CustomViewHolder)holder).sendCommend.setOnClickListener(new View.OnClickListener() {
+            ((CustomViewHolder)holder).sendCommend.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     DatabaseReference databaseReferenceComment = FirebaseDatabase.getInstance().getReference("comments");
@@ -224,11 +225,14 @@ public class MapFeedFragment extends Fragment {
                 }
             });
 
-            ((MapFeedFragment.MapPostAdapter.CustomViewHolder)holder).comments.setOnTouchListener(new View.OnTouchListener(){
+            ((CustomViewHolder)holder).comments.setOnTouchListener(new View.OnTouchListener(){
                 public boolean onTouch(View v, MotionEvent event) {
                     switch(event.getAction()) {
                         case MotionEvent.ACTION_DOWN: {
-                            ((MapFeedFragment.MapPostAdapter.CustomViewHolder)holder).recyclerView.setAdapter(((MapFeedFragment.MapPostAdapter.CustomViewHolder)holder).boardRecyclerViewAdapter);
+                            if(!((CustomViewHolder)holder).checkComment) {
+                                ((CustomViewHolder) holder).recyclerView.setAdapter(((CustomViewHolder) holder).boardRecyclerViewAdapter);
+                                ((CustomViewHolder)holder).checkComment = !((CustomViewHolder)holder).checkComment;
+                            }
                             break;
                         }
                     }
@@ -247,8 +251,8 @@ public class MapFeedFragment extends Fragment {
                                 String photoUrl = document.getData().get("photoUrl").toString();
                                 if (photoUrl != null)
                                     GlideApp.with(holder.itemView.getContext()).asBitmap().load(photoUrl).apply(new RequestOptions().circleCrop()).
-                                            into(((MapFeedFragment.MapPostAdapter.CustomViewHolder) holder).userImage);
-                                ((MapFeedFragment.MapPostAdapter.CustomViewHolder) holder).userName.setText(document.getData().get("name").toString());
+                                            into(((CustomViewHolder) holder).userImage);
+                                ((CustomViewHolder) holder).userName.setText(document.getData().get("name").toString());
                             } else {
                                 Log.d(TAG, "No such document");
                             }
@@ -260,7 +264,7 @@ public class MapFeedFragment extends Fragment {
             });
 
             if (result.get(position).getPostText() != null)
-                ((MapFeedFragment.MapPostAdapter.CustomViewHolder) holder).description_text.setText(result.get(position).getPostText());
+                ((CustomViewHolder) holder).description_text.setText(result.get(position).getPostText());
 
 
         }
@@ -273,6 +277,7 @@ public class MapFeedFragment extends Fragment {
         private class CustomViewHolder extends RecyclerView.ViewHolder {
             ImageView imageView;
             ImageView userImage;
+            ImageView backButton;
             TextView userName;
             TextView description_text;
             ImageView Like;
@@ -281,7 +286,8 @@ public class MapFeedFragment extends Fragment {
             RecyclerView recyclerView;
             ImageView sendCommend;
             GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 1);
-            final CommentAdapter boardRecyclerViewAdapter = new CommentAdapter();
+            CommentAdapter boardRecyclerViewAdapter;
+            boolean checkComment = false;
 
             public CustomViewHolder(View view) {
                 super(view);
@@ -290,6 +296,8 @@ public class MapFeedFragment extends Fragment {
                 imageView = (ImageView) view.findViewById(R.id.postImage);
                 description_text = (TextView) view.findViewById(R.id.description_text);
                 Like = view.findViewById(R.id.Like);
+                backButton = view.findViewById(R.id.backButton);
+                backButton.setVisibility(View.INVISIBLE);
                 LikeNum = view.findViewById(R.id.LikeNum);
                 comments = (EditText) view.findViewById(R.id.commend);
                 recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);

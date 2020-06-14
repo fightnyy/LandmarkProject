@@ -127,7 +127,7 @@ public class PostDetailFragment extends Fragment {
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 1);
         recyclerView.setLayoutManager(layoutManager);
-        final CommentAdapter boardRecyclerViewAdapter = new CommentAdapter();
+        final CommentAdapter boardRecyclerViewAdapter = new CommentAdapter(item.getKey());
         recyclerView.setAdapter(boardRecyclerViewAdapter);
 
         boardRecyclerViewAdapter.setOnItemClickListener(new OnFeedItemClickListener() {
