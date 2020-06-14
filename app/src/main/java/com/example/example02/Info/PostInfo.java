@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PostInfo {
+public class PostInfo{
     private String postText;
     private String photoUrl;
     private String publisher;
@@ -18,8 +18,7 @@ public class PostInfo {
     private Date createdAt;
     public int starCount = 0;
     public Map<String, Boolean> stars = new HashMap<>();
-    public long secretpostNum=0;
-
+    public long secretpostNum = 0;
 
     public PostInfo(){
         // Default constructor required for calls to DataSnapshot.getValue(Post.class)
@@ -53,6 +52,10 @@ public class PostInfo {
     public String getPublisher() { return this.publisher; }
 
     public String getKey() { return this.key; }
+
+    public Date getCreatedAt(){ return getCreatedAt(); }
+
+    public int getStarCount() { return this.starCount; }
 
     @Exclude
     public Map<String, Object> toMap() {

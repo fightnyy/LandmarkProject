@@ -49,6 +49,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -58,7 +61,6 @@ public class MapFeedFragment extends Fragment {
     private RecyclerView recyclerView;
 
     private List<PostInfo> imageDTOs = new ArrayList<>();
-    private List<PostInfo> result = new ArrayList<>();
     private List<String> uidlist = new ArrayList<>();
 
     private MapInfo map;
@@ -83,13 +85,15 @@ public class MapFeedFragment extends Fragment {
         areaName = (TextView) view.findViewById(R.id.areaName);
         view.findViewById(R.id.backButton).setOnClickListener(onClickListener);
 
-        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
-        GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 1);
 
-        recyclerView.setLayoutManager(layoutManager);
 
         final MapPostAdapter mapPostAdapter = new MapPostAdapter();
-        recyclerView.setAdapter(mapPostAdapter);
+        final Comparator<PostInfo> salesComparator = new Comparator<PostInfo>() {
+            @Override
+            public int compare(PostInfo o1, PostInfo o2) {
+                return o2.getStarCount() - o1.getStarCount();
+            }
+        };
 
         database.getReference().child("posts").orderByChild("area").equalTo(map.getName()).addValueEventListener(new ValueEventListener() {
             @Override
@@ -98,10 +102,7 @@ public class MapFeedFragment extends Fragment {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     PostInfo imageDTO = snapshot.getValue(PostInfo.class);
                     imageDTOs.add(imageDTO);
-                }
-                for (int i = 0; i < imageDTOs.size(); i++) {
-                    result.add(imageDTOs.get(imageDTOs.size() - i - 1));
-                    Log.d(TAG, imageDTOs.get(i).getPhotoUrl());
+                    Collections.sort(imageDTOs,salesComparator);
                 }
                 mapPostAdapter.notifyDataSetChanged();
             }
@@ -110,6 +111,10 @@ public class MapFeedFragment extends Fragment {
             public void onCancelled(DatabaseError databaseError) {
             }
         });
+        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+        GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 1);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(mapPostAdapter);
         database.getReference().child("posts").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -152,14 +157,13 @@ public class MapFeedFragment extends Fragment {
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_post_detail, parent, false);
-
             return new CustomViewHolder(view);
         }
 
         @Override
         public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int position) {
-            ((CustomViewHolder) holder).boardRecyclerViewAdapter = new CommentAdapter(result.get(position).getKey());
-            Glide.with(holder.itemView.getContext()).load(result.get(position).getPhotoUrl()).
+            ((CustomViewHolder) holder).boardRecyclerViewAdapter = new CommentAdapter(imageDTOs.get(position).getKey());
+            Glide.with(holder.itemView.getContext()).load(imageDTOs.get(position).getPhotoUrl()).
                     into(((CustomViewHolder) holder).imageView);
 
             final FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -175,7 +179,7 @@ public class MapFeedFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(getContext(), ProfileActivity.class);
-                    intent.putExtra("user", result.get(position).getPublisher());
+                    intent.putExtra("user", imageDTOs.get(position).getPublisher());
                     startActivity(intent);
                 }
             });
@@ -185,7 +189,7 @@ public class MapFeedFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(getContext(), ProfileActivity.class);
-                    intent.putExtra("user", result.get(position).getPublisher());
+                    intent.putExtra("user", imageDTOs.get(position).getPublisher());
                     startActivity(intent);
                 }
             });
@@ -195,7 +199,7 @@ public class MapFeedFragment extends Fragment {
                 ((CustomViewHolder) holder).Like.setImageResource(R.drawable.favorite_border);
             }
 
-            database.getReference().child("comments").child(result.get(position).getKey()).addValueEventListener(new ValueEventListener() {
+            database.getReference().child("comments").child(imageDTOs.get(position).getKey()).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     ((CustomViewHolder)holder).boardRecyclerViewAdapter.clearResult();
@@ -216,11 +220,11 @@ public class MapFeedFragment extends Fragment {
                 public void onClick(View v) {
                     DatabaseReference databaseReferenceComment = FirebaseDatabase.getInstance().getReference("comments");
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                    String key = databaseReferenceComment.child("comments").child(result.get(position).getKey()).push().getKey();
+                    String key = databaseReferenceComment.child("comments").child(imageDTOs.get(position).getKey()).push().getKey();
                     CommentInfo commentAdd = new CommentInfo(((CustomViewHolder)holder).comments.getText().toString(), user.getUid(), key);
                     Map<String, Object> postValues = commentAdd.toMap();
 
-                    databaseReferenceComment.child(result.get(position).getKey()).child(key).setValue(postValues);
+                    databaseReferenceComment.child(imageDTOs.get(position).getKey()).child(key).setValue(postValues);
                     startToast("댓글을 작성하였습니다.");
                 }
             });
@@ -240,7 +244,7 @@ public class MapFeedFragment extends Fragment {
                 }
             });
 
-            DocumentReference docRef = db.collection("users").document(result.get(position).getPublisher());
+            DocumentReference docRef = db.collection("users").document(imageDTOs.get(position).getPublisher());
             docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -263,8 +267,8 @@ public class MapFeedFragment extends Fragment {
                 }
             });
 
-            if (result.get(position).getPostText() != null)
-                ((CustomViewHolder) holder).description_text.setText(result.get(position).getPostText());
+            if (imageDTOs.get(position).getPostText() != null)
+                ((CustomViewHolder) holder).description_text.setText(imageDTOs.get(position).getPostText());
 
 
         }

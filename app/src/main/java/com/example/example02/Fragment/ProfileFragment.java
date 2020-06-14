@@ -43,6 +43,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class ProfileFragment extends Fragment {
@@ -54,7 +56,6 @@ public class ProfileFragment extends Fragment {
     private String userUid;
 
     private List<PostInfo> imageDTOs = new ArrayList<>();
-    private List<PostInfo> result = new ArrayList<>();
 
     private AlertDialog.Builder builder;
     private AlertDialog dialog;
@@ -90,11 +91,6 @@ public class ProfileFragment extends Fragment {
         followButton = (TextView) view.findViewById(R.id.followButton);
         followingButton = (TextView) view.findViewById(R.id.followingButton);
 
-        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
-        GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
-        recyclerView.setLayoutManager(layoutManager);
-        final ProfileFragment.BoardRecyclerViewAdapter boardRecyclerViewAdapter = new ProfileFragment.BoardRecyclerViewAdapter();
-        recyclerView.setAdapter(boardRecyclerViewAdapter);
 
         DocumentReference docRef = db.collection("users").document(userUid);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -127,6 +123,18 @@ public class ProfileFragment extends Fragment {
                 }
             }
         });
+        final Comparator<PostInfo> salesComparator = new Comparator<PostInfo>() {
+            @Override
+            public int compare(PostInfo o1, PostInfo o2) {
+                return o2.getCreatedAt().compareTo(o1.getCreatedAt());
+            }
+        };
+
+        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+        GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
+        recyclerView.setLayoutManager(layoutManager);
+        final ProfileFragment.BoardRecyclerViewAdapter boardRecyclerViewAdapter = new ProfileFragment.BoardRecyclerViewAdapter();
+        recyclerView.setAdapter(boardRecyclerViewAdapter);
 
         database.getReference().child("posts").orderByChild("publisher").equalTo(userUid).addValueEventListener(new ValueEventListener() {
             @Override
@@ -135,12 +143,8 @@ public class ProfileFragment extends Fragment {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     PostInfo imageDTO = snapshot.getValue(PostInfo.class);
                     imageDTOs.add(imageDTO);
+                    //Collections.sort(imageDTOs,salesComparator);
                 }
-                for (int i = 0; i < imageDTOs.size(); i++) {
-                    result.add(imageDTOs.get(imageDTOs.size() - i - 1));
-                    Log.d(TAG, imageDTOs.get(i).getPhotoUrl());
-                }
-
                 boardRecyclerViewAdapter.notifyDataSetChanged();
             }
 
@@ -290,7 +294,7 @@ public class ProfileFragment extends Fragment {
         OnFeedItemClickListener listener;
 
         public PostInfo getItem(int position) {
-            return result.get(position);
+            return imageDTOs.get(position);
         }
 
         @Override
@@ -301,7 +305,7 @@ public class ProfileFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-            Glide.with(holder.itemView.getContext()).load(result.get(position).getPhotoUrl()).into(((ProfileFragment.BoardRecyclerViewAdapter.CustomViewHolder) holder).imageView);
+            Glide.with(holder.itemView.getContext()).load(imageDTOs.get(position).getPhotoUrl()).into(((ProfileFragment.BoardRecyclerViewAdapter.CustomViewHolder) holder).imageView);
         }
 
         @Override
