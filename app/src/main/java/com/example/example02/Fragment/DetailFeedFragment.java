@@ -153,17 +153,12 @@ public class DetailFeedFragment extends Fragment {
             return imageDTOs.get(position);
         }
 
-
-
-
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View itemview = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_post_detail, parent, false);
 
             return new CustomViewHolder(itemview);
         }
-
-
 
         @Override
         public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
@@ -180,9 +175,6 @@ public class DetailFeedFragment extends Fragment {
                     Log.d("startcomplete",position+"");
                 }
             });
-
-
-
 
             if (imageDTOs.get(position).stars.containsKey(auth.getCurrentUser().getUid())) {
                 ((CustomViewHolder) holder).Like.setImageResource(R.drawable.favorite);
@@ -237,7 +229,6 @@ public class DetailFeedFragment extends Fragment {
                 }
             });
 
-
             DocumentReference docRef = db.collection("users").document(imageDTOs.get(position).getPublisher());
             docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
@@ -266,12 +257,10 @@ public class DetailFeedFragment extends Fragment {
             }
         };
 
-
         @Override
         public int getItemCount() {
             return imageDTOs.size();
         }
-
 
         public class CustomViewHolder extends RecyclerView.ViewHolder {
             public ImageView profileImage;
@@ -302,9 +291,6 @@ public class DetailFeedFragment extends Fragment {
                 recyclerView = (RecyclerView) itemview.findViewById(R.id.recyclerView);
                 sendCommend = (ImageView) itemview.findViewById(R.id.sendCommend);
                 recyclerView.setLayoutManager(layoutManager);
-
-
-
 
             }
         }

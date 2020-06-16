@@ -49,7 +49,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -61,7 +60,6 @@ public class MapFeedFragment extends Fragment {
     private RecyclerView recyclerView;
 
     private List<PostInfo> imageDTOs = new ArrayList<>();
-    private List<String> uidlist = new ArrayList<>();
 
     private MapInfo map;
     private TextView areaName;

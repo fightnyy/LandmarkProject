@@ -8,14 +8,16 @@ public class MapInfo {
     private String location2;
     private String name;
     private String explain;
+    private String type;
 
     public MapInfo(){ }
 
-    public MapInfo(String location1, String location2, String name, String explain) {
+    public MapInfo(String location1, String location2, String name, String explain, String type) {
         this.location1 = location1;
         this.location2 = location2;
         this.name = name;
         this.explain = explain;
+        this.type = type;
     }
 
     public String getExplain(){ return this.explain; }
@@ -31,5 +33,8 @@ public class MapInfo {
 
     public String getName(){ return this.name; }
     public void setName(String name){ this.name = name; }
+
+    public String getType(){ return this.type; }
+    public void setType(String type){ this.type = type; }
 
 }
