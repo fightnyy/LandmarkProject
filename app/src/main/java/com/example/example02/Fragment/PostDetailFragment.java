@@ -236,7 +236,7 @@ public class PostDetailFragment extends Fragment {
 
                 case R.id.changeButton:
                     userText.setVisibility(view.GONE);
-                    usertext = (EditText) view.findViewById(R.id.edit_description_text);
+                    usertext = (EditText) view.findViewById(R.id.edit_text);
                     usertext.setVisibility(view.VISIBLE);
                     finishButton = (ImageView) view.findViewById(R.id.finishButton);
                     finishButton.setImageResource(R.drawable.ic_check_black_24dp);
@@ -250,7 +250,7 @@ public class PostDetailFragment extends Fragment {
                     builder.setPositiveButton("예", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            String commend = ((EditText) view.findViewById(R.id.edit_description_text)).getText().toString();
+                            String commend = ((EditText) view.findViewById(R.id.edit_text)).getText().toString();
                             databaseReference.child(item.getKey()).child("postText").setValue(commend);
                             startToast("게시글을 수정하였습니다.");
                             FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
