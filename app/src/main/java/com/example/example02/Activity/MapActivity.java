@@ -70,19 +70,23 @@ public class MapActivity extends AppCompatActivity
         mMap = googleMap;
         BitmapDrawable bitmapdraw = (BitmapDrawable)getResources().getDrawable(R.drawable.school_pin);
         Bitmap b = bitmapdraw.getBitmap();
-        final Bitmap schoolmarker = Bitmap.createScaledBitmap(b, 55, 55, false);
+        final Bitmap schoolmarker = Bitmap.createScaledBitmap(b, 60, 60, false);
 
         BitmapDrawable bitmapdraw01 = (BitmapDrawable)getResources().getDrawable(R.drawable.cafe_pin);
         Bitmap b01 = bitmapdraw01.getBitmap();
-        final Bitmap cafemarker = Bitmap.createScaledBitmap(b01, 55, 55, false);
+        final Bitmap cafemarker = Bitmap.createScaledBitmap(b01, 60, 60, false);
 
         BitmapDrawable bitmapdraw02 = (BitmapDrawable)getResources().getDrawable(R.drawable.landmark_pin);
         Bitmap b02 = bitmapdraw02.getBitmap();
-        final Bitmap tripamrker = Bitmap.createScaledBitmap(b02, 55, 55, false);
+        final Bitmap tripamrker = Bitmap.createScaledBitmap(b02, 60, 60, false);
 
         BitmapDrawable bitmapdraw03 = (BitmapDrawable)getResources().getDrawable(R.drawable.landmark_pin02);
         Bitmap b03 = bitmapdraw03.getBitmap();
-        final Bitmap tripamrker02 = Bitmap.createScaledBitmap(b03, 55, 55, false);
+        final Bitmap tripamrker02 = Bitmap.createScaledBitmap(b03, 60, 60, false);
+
+        BitmapDrawable bitmapdraw04 = (BitmapDrawable)getResources().getDrawable(R.drawable.warning_pin);
+        Bitmap b04 = bitmapdraw04.getBitmap();
+        final Bitmap warningmarker = Bitmap.createScaledBitmap(b04, 60, 60, false);
 
         mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(37.26222, 127.02889)));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(12));
@@ -116,8 +120,12 @@ public class MapActivity extends AppCompatActivity
                         makerOptions.icon(BitmapDescriptorFactory.fromBitmap(schoolmarker));
                     else if(mapInfo.get(idx).getType().equals("여행지"))
                         makerOptions.icon(BitmapDescriptorFactory.fromBitmap(tripamrker));
-                    else
+                    else if(mapInfo.get(idx).getType().equals("절"))
+                        makerOptions.icon(BitmapDescriptorFactory.fromBitmap(tripamrker02));
+                    else if(mapInfo.get(idx).getType().equals("카페"))
                         makerOptions.icon(BitmapDescriptorFactory.fromBitmap(cafemarker));
+                    else
+                        makerOptions.icon(BitmapDescriptorFactory.fromBitmap(warningmarker));
                     mMap.addMarker(makerOptions);
                 }
             }
