@@ -37,6 +37,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -71,6 +73,8 @@ public class PostDetailFragment extends Fragment {
     private View view;
     private ImageView changeButton;
     private ImageView removeButton;
+    private ImageView Like;
+    private TextView LikeNum;
 
     private List<CommentInfo> imageDTOs = new ArrayList<>();
 
@@ -92,6 +96,8 @@ public class PostDetailFragment extends Fragment {
         userImage = (ImageView) view.findViewById(R.id.profileImage);
         Image = (ImageView) view.findViewById(R.id.postImage);
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+        Like = (ImageView) view.findViewById(R.id.Like);
+        LikeNum = (TextView) view.findViewById(R.id.LikeNum);
 
         item = ((ProfileActivity) getActivity()).getPostInfo();
 
@@ -108,6 +114,13 @@ public class PostDetailFragment extends Fragment {
         final CommentAdapter boardRecyclerViewAdapter = new CommentAdapter(item.getKey());
         recyclerView.setAdapter(boardRecyclerViewAdapter);
 
+        Like.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onLikeClicked(database.getReference().child("posts").child(item.getKey()));
+            }
+        });
+
         boardRecyclerViewAdapter.setOnItemClickListener(new OnFeedItemClickListener() {
             @Override
             public void onItemClick(RecyclerView.ViewHolder holder, View view, int position) {
@@ -115,6 +128,13 @@ public class PostDetailFragment extends Fragment {
                 startToast("아이템선택됨" + comment.getComment());
             }
         });
+
+        if (item.stars.containsKey(user.getUid())) {
+            Like.setImageResource(R.drawable.favorite);
+        } else {
+            Like.setImageResource(R.drawable.favorite_border);
+        }
+        LikeNum.setText("좋아요"+item.starCount+"개");
 
         if(user.getUid().equals(item.getPublisher())){
             changeButton = (ImageView) view.findViewById(R.id.changeButton);
@@ -147,6 +167,21 @@ public class PostDetailFragment extends Fragment {
                 }
             }
         });
+        database.getReference().child("posts").orderByChild("key").equalTo(item.getKey()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    PostInfo p = snapshot.getValue(PostInfo.class);
+                    LikeNum.setText("좋아요"+p.starCount+"개");
+                }
+                boardRecyclerViewAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+
         database.getReference().child("comments").child(item.getKey()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -246,6 +281,34 @@ public class PostDetailFragment extends Fragment {
             }
         }
     };
+
+    private void onLikeClicked(DatabaseReference postRef) {
+        postRef.runTransaction(new Transaction.Handler() {
+            @Override
+            public Transaction.Result doTransaction(MutableData mutableData) {
+                PostInfo p = mutableData.getValue(PostInfo.class);
+                if (p == null) {
+                    return Transaction.success(mutableData);
+                }
+                if (p.stars.containsKey(user.getUid())) {
+                    p.starCount = p.starCount - 1;
+                    Like.setImageResource(R.drawable.favorite_border);
+                    p.stars.remove(user.getUid());
+                } else {
+                    p.starCount = p.starCount + 1;
+                    Like.setImageResource(R.drawable.favorite);
+                    p.stars.put(user.getUid(), true);
+                }
+                mutableData.setValue(p);
+                return Transaction.success(mutableData);
+            }
+
+            @Override
+            public void onComplete(DatabaseError databaseError, boolean b,
+                                   DataSnapshot dataSnapshot) {
+            }
+        });
+    }
 
     private void deleteCotent() {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();

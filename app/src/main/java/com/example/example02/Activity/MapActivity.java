@@ -80,9 +80,9 @@ public class MapActivity extends AppCompatActivity
         Bitmap b02 = bitmapdraw02.getBitmap();
         final Bitmap tripamrker = Bitmap.createScaledBitmap(b02, 55, 55, false);
 
-        BitmapDrawable bitmapdraw03 = (BitmapDrawable)getResources().getDrawable(R.drawable.landmark_pin);
+        BitmapDrawable bitmapdraw03 = (BitmapDrawable)getResources().getDrawable(R.drawable.landmark_pin02);
         Bitmap b03 = bitmapdraw03.getBitmap();
-        final Bitmap tripamrker02 = Bitmap.createScaledBitmap(b03, 70, 70, false);
+        final Bitmap tripamrker02 = Bitmap.createScaledBitmap(b03, 55, 55, false);
 
         mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(37.26222, 127.02889)));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(12));
