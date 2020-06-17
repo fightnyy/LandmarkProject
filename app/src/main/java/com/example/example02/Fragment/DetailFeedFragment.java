@@ -1,12 +1,10 @@
 package com.example.example02.Fragment;
 
-import android.content.Context;
-<<<<<<< HEAD
-=======
+
+
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
->>>>>>> 77fdabbc36ed9d675754fa01a89a6598726c63f9
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;

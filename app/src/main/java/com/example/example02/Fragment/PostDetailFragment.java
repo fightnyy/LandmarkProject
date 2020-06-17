@@ -73,14 +73,9 @@ public class PostDetailFragment extends Fragment {
     private View view;
     private ImageView changeButton;
     private ImageView removeButton;
-<<<<<<< HEAD
-    FirebaseAuth auth;
-    ImageView Like;
-    TextView LikeNum;
-=======
     private ImageView Like;
     private TextView LikeNum;
->>>>>>> 77fdabbc36ed9d675754fa01a89a6598726c63f9
+    FirebaseAuth auth;
 
     private List<CommentInfo> imageDTOs = new ArrayList<>();
 
@@ -152,19 +147,15 @@ public class PostDetailFragment extends Fragment {
             }
         });
 
-<<<<<<< HEAD
-        if (item.stars.containsKey(auth.getCurrentUser().getUid())) {
-=======
         if (item.stars.containsKey(user.getUid())) {
->>>>>>> 77fdabbc36ed9d675754fa01a89a6598726c63f9
+
             Like.setImageResource(R.drawable.favorite);
         } else {
             Like.setImageResource(R.drawable.favorite_border);
         }
-<<<<<<< HEAD
-=======
+
         LikeNum.setText("좋아요"+item.starCount+"개");
->>>>>>> 77fdabbc36ed9d675754fa01a89a6598726c63f9
+
 
         if(user.getUid().equals(item.getPublisher())){
             changeButton = (ImageView) view.findViewById(R.id.changeButton);
@@ -351,31 +342,8 @@ public class PostDetailFragment extends Fragment {
 
 
 
-    private void onLikeClicked(DatabaseReference postRef) {
-        postRef.runTransaction(new Transaction.Handler() {
-            @Override
-            public Transaction.Result doTransaction(MutableData mutableData) {
-                PostInfo p = mutableData.getValue(PostInfo.class);
-                if (p == null) {
-                    return Transaction.success(mutableData);
-                }
-                if (p.stars.containsKey(auth.getCurrentUser().getUid())) {
-                    p.starCount = p.starCount - 1;
-                    p.stars.remove(auth.getCurrentUser().getUid());
-                } else {
-                    p.starCount = p.starCount + 1;
-                    p.stars.put(auth.getCurrentUser().getUid(), true);
-                }
-                mutableData.setValue(p);
-                return Transaction.success(mutableData);
-            }
-
-            @Override
-            public void onComplete(DatabaseError databaseError, boolean b,
-                                   DataSnapshot dataSnapshot) {
-            }
-        });
-    }
-
 
 }
+
+
+

@@ -126,7 +126,9 @@ public class WritingActivity extends BasisActivity {
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();
         final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("posts");
-        final StorageReference mountainImagesRef = storageRef.child("/postImage.jpg");
+        final String key = databaseReference.child("posts").push().getKey();
+        final StorageReference mountainImagesRef = storageRef.child("posts/" + key + "/postImage.jpg");
+
 
         if (imagePath == null) {
             startSettingImage();
@@ -149,7 +151,6 @@ public class WritingActivity extends BasisActivity {
                     public void onComplete(@NonNull Task<Uri> task) {
                         if (task.isSuccessful()) {
                             Uri downloadUri = task.getResult();
-                            String key = databaseReference.child("posts").push().getKey();
                             PostInfo postInfo = new PostInfo(writingText, downloadUri.toString(), user.getUid(), "수원", area, new Date(), key);
                             Map<String, Object> postValues = postInfo.toMap();
 
