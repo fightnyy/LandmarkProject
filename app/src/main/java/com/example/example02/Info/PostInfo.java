@@ -18,7 +18,6 @@ public class PostInfo{
     private Date createdAt;
     public int starCount = 0;
     public Map<String, Boolean> stars = new HashMap<>();
-    public long secretpostNum = 0;
 
     public PostInfo(){
         // Default constructor required for calls to DataSnapshot.getValue(Post.class)

@@ -145,6 +145,7 @@ public class ProfileFragment extends Fragment {
                     imageDTOs.add(imageDTO);
                     //Collections.sort(imageDTOs,salesComparator);
                 }
+                Collections.reverse(imageDTOs);
                 boardRecyclerViewAdapter.notifyDataSetChanged();
             }
 

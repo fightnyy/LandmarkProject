@@ -37,7 +37,6 @@
 
         <activity android:name=".Activity.MapActivity" />
         <activity android:name=".Activity.WritingActivity" />
-        <activity android:name=".Activity.CameraActivity" />
         <activity android:name=".Activity.ProfileSettingActivity" />
         <activity android:name=".Activity.ProfileActivity" />
         <activity android:name=".Activity.LoginActivity" />

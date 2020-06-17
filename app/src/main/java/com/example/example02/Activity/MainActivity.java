@@ -177,10 +177,6 @@ public class MainActivity extends BasisActivity {
         startActivity(intent);
     }
 
-    private void startCameraActivity() {
-        Intent intent = new Intent(this, CameraActivity.class);
-        startActivity(intent);
-    }
 
     private void startProfileActivity() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();

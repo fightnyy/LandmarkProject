@@ -152,7 +152,7 @@
             <FrameLayout
                 android:id="@+id/container"
                 android:layout_width="match_parent"
-                android:layout_height="435dp"
+                android:layout_height="570dp"
                 android:layout_below="@+id/relLayout5">
             </FrameLayout>
 
