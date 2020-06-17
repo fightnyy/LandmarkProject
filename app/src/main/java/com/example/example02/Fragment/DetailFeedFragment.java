@@ -49,6 +49,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -93,6 +94,7 @@ public class DetailFeedFragment extends Fragment {
                     PostInfo imageDTO = snapshot.getValue(PostInfo.class);
                     imageDTOs.add(imageDTO);
                 }
+                Collections.reverse(imageDTOs);
                 boardRecyclerViewAdapter.notifyDataSetChanged();
             }
 

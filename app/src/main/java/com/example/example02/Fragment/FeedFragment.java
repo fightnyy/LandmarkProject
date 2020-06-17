@@ -33,6 +33,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class FeedFragment extends Fragment {
@@ -89,6 +90,7 @@ public class FeedFragment extends Fragment {
                                 PostInfo imageDTO = snapshot.getValue(PostInfo.class);
                                 imageDTOs.add(imageDTO);
                             }
+                            Collections.reverse(imageDTOs);
                             boardRecyclerViewAdapter.notifyDataSetChanged();
                         }
 
@@ -106,6 +108,7 @@ public class FeedFragment extends Fragment {
                                 PostInfo imageDTO = snapshot.getValue(PostInfo.class);
                                 imageDTOs.add(imageDTO);
                             }
+                            Collections.reverse(imageDTOs);
                             boardRecyclerViewAdapter.notifyDataSetChanged();
                         }
 
@@ -177,6 +180,7 @@ public class FeedFragment extends Fragment {
                             }
                             Log.d("checkdebug","-----------------4순위 경쟁");
                             imageDTOs = Feeds;
+                            Collections.reverse(imageDTOs);
                             boardRecyclerViewAdapter.notifyDataSetChanged();
                         }
 
@@ -198,6 +202,7 @@ public class FeedFragment extends Fragment {
                                 PostInfo imageDTO = snapshot.getValue(PostInfo.class);
                                 imageDTOs.add(imageDTO);
                             }
+                            Collections.reverse(imageDTOs);
                             boardRecyclerViewAdapter.notifyDataSetChanged();
 
                         }
@@ -233,6 +238,7 @@ public class FeedFragment extends Fragment {
                     PostInfo imageDTO = snapshot.getValue(PostInfo.class);
                     imageDTOs.add(imageDTO);
                 }
+                Collections.reverse(imageDTOs);
                 boardRecyclerViewAdapter.notifyDataSetChanged();
 
 

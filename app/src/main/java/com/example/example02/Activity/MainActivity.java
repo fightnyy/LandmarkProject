@@ -4,8 +4,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -78,8 +76,6 @@ public class MainActivity extends BasisActivity {
             startLoginActivity();
         }
 
-        //BottomNavigationView bottomNavigationView=findViewById(R.id.bottom_navigation);
-        //bottomNavigationView.setOnNavigationItemSelectedListener(onBottomNavigationListener);
         findViewById(R.id.mapButton).setOnClickListener(onClickListener);
         findViewById(R.id.feedButton).setOnClickListener(onClickListener);
         findViewById(R.id.requestButton).setOnClickListener(onClickListener);
@@ -141,27 +137,6 @@ public class MainActivity extends BasisActivity {
                     }
                 });
     }
-
-
-    /*BottomNavigationView.OnNavigationItemSelectedListener onBottomNavigationListener=new BottomNavigationView.OnNavigationItemSelectedListener() {
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-            switch (menuItem.getItemId())
-            {
-                case R.id.feed:
-                    Intent feedintent=new Intent(getApplicationContext(),FeedActivity.class);
-                    startActivity(feedintent);
-                    return true;
-
-                case R.id.Request:
-                    Intent requestintent=new Intent(getApplicationContext(),RequestActivity.class);
-                    startActivity(requestintent);
-                    return true;
-
-            }
-            return true;
-        }
-    };*/
 
     private void startToast(String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
