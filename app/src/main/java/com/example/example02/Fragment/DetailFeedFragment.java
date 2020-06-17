@@ -1,6 +1,12 @@
 package com.example.example02.Fragment;
 
 import android.content.Context;
+<<<<<<< HEAD
+=======
+import android.content.Intent;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
+>>>>>>> 77fdabbc36ed9d675754fa01a89a6598726c63f9
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -23,6 +29,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.example02.Activity.ProfileActivity;
 import com.example.example02.Adapter.CommentAdapter;
 import com.example.example02.GlideApp;
 import com.example.example02.Info.CommentInfo;
@@ -51,7 +58,6 @@ import java.util.Map;
 public class DetailFeedFragment extends Fragment {
     private RecyclerView recyclerView;
     private List<PostInfo> imageDTOs = new ArrayList<>();
-    private List<String> uidlist = new ArrayList<>();
     private FirebaseDatabase database;
     private String userID;
     ViewGroup rootView;
@@ -61,14 +67,12 @@ public class DetailFeedFragment extends Fragment {
     final DetailFeedFragment.BoardRecyclerViewAdapter boardRecyclerViewAdapter = new BoardRecyclerViewAdapter();
     LinearLayoutManager layoutManager;
 
-
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             userID = getArguments().getString("username");
-            detailposition=getArguments().getInt("position");
+            detailposition = getArguments().getInt("position");
         }
         Log.d("onCreate작동","onCreate작동"+detailposition);
         layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
@@ -100,23 +104,6 @@ public class DetailFeedFragment extends Fragment {
             }
         });
 
-
-
-        database.getReference().child("posts").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                uidlist.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    String uidkey = snapshot.getKey();
-                    uidlist.add(uidkey);
-                }
-                boardRecyclerViewAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        });
         recyclerView = rootView.findViewById(R.id.detail_recyclerView);
         recyclerView.setAdapter(boardRecyclerViewAdapter);
         recyclerView.setLayoutManager(layoutManager);
@@ -146,17 +133,12 @@ public class DetailFeedFragment extends Fragment {
             return imageDTOs.get(position);
         }
 
-
-
-
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View itemview = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_post_detail, parent, false);
 
             return new CustomViewHolder(itemview);
         }
-
-
 
         @Override
         public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
@@ -169,13 +151,10 @@ public class DetailFeedFragment extends Fragment {
             ((CustomViewHolder) holder).Like.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    onLikeClicked(database.getReference().child("posts").child(uidlist.get(position)));
+                    onLikeClicked(database.getReference().child("posts").child(imageDTOs.get(position).getKey()));
                     Log.d("startcomplete",position+"");
                 }
             });
-
-
-
 
             if (imageDTOs.get(position).stars.containsKey(auth.getCurrentUser().getUid())) {
                 ((CustomViewHolder) holder).Like.setImageResource(R.drawable.favorite);
@@ -197,6 +176,24 @@ public class DetailFeedFragment extends Fragment {
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
+                }
+            });
+
+            ((CustomViewHolder) holder).profileImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getContext(), ProfileActivity.class);
+                    intent.putExtra("user", imageDTOs.get(position).getPublisher());
+                    startActivity(intent);
+                }
+            });
+
+            ((CustomViewHolder) holder).userName.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getContext(), ProfileActivity.class);
+                    intent.putExtra("user", imageDTOs.get(position).getPublisher());
+                    startActivity(intent);
                 }
             });
 
@@ -230,7 +227,6 @@ public class DetailFeedFragment extends Fragment {
                 }
             });
 
-
             DocumentReference docRef = db.collection("users").document(imageDTOs.get(position).getPublisher());
             docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
@@ -242,7 +238,6 @@ public class DetailFeedFragment extends Fragment {
                                 ((CustomViewHolder) holder).userName.setText(document.getData().get("name").toString());
                                 GlideApp.with(getContext()).asBitmap().load(document.getData().get("photoUrl").toString()).apply(new RequestOptions().circleCrop()).into(((CustomViewHolder) holder).profileImage);
                             } else {
-
                             }
                         }
                     } else {
@@ -259,12 +254,10 @@ public class DetailFeedFragment extends Fragment {
             }
         };
 
-
         @Override
         public int getItemCount() {
             return imageDTOs.size();
         }
-
 
         public class CustomViewHolder extends RecyclerView.ViewHolder {
             public ImageView profileImage;
@@ -295,9 +288,6 @@ public class DetailFeedFragment extends Fragment {
                 recyclerView = (RecyclerView) itemview.findViewById(R.id.recyclerView);
                 sendCommend = (ImageView) itemview.findViewById(R.id.sendCommend);
                 recyclerView.setLayoutManager(layoutManager);
-
-
-
 
             }
         }

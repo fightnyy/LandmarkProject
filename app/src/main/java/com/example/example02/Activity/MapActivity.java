@@ -3,8 +3,17 @@ package com.example.example02.Activity;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
+import android.app.Activity;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.example02.Fragment.MapFeedFragment;
@@ -15,6 +24,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -57,6 +68,25 @@ public class MapActivity extends AppCompatActivity
     public void onMapReady(final GoogleMap googleMap) {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         mMap = googleMap;
+        BitmapDrawable bitmapdraw = (BitmapDrawable)getResources().getDrawable(R.drawable.school_pin);
+        Bitmap b = bitmapdraw.getBitmap();
+        final Bitmap schoolmarker = Bitmap.createScaledBitmap(b, 60, 60, false);
+
+        BitmapDrawable bitmapdraw01 = (BitmapDrawable)getResources().getDrawable(R.drawable.cafe_pin);
+        Bitmap b01 = bitmapdraw01.getBitmap();
+        final Bitmap cafemarker = Bitmap.createScaledBitmap(b01, 60, 60, false);
+
+        BitmapDrawable bitmapdraw02 = (BitmapDrawable)getResources().getDrawable(R.drawable.landmark_pin);
+        Bitmap b02 = bitmapdraw02.getBitmap();
+        final Bitmap tripamrker = Bitmap.createScaledBitmap(b02, 60, 60, false);
+
+        BitmapDrawable bitmapdraw03 = (BitmapDrawable)getResources().getDrawable(R.drawable.landmark_pin02);
+        Bitmap b03 = bitmapdraw03.getBitmap();
+        final Bitmap tripamrker02 = Bitmap.createScaledBitmap(b03, 60, 60, false);
+
+        BitmapDrawable bitmapdraw04 = (BitmapDrawable)getResources().getDrawable(R.drawable.warning_pin);
+        Bitmap b04 = bitmapdraw04.getBitmap();
+        final Bitmap warningmarker = Bitmap.createScaledBitmap(b04, 60, 60, false);
 
         mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(37.26222, 127.02889)));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(12));
@@ -74,6 +104,7 @@ public class MapActivity extends AppCompatActivity
                         map.setLocation2(objectMap.get("location2").toString());
                         map.setName(objectMap.get("name").toString());
                         map.setExplain(objectMap.get("explain").toString());
+                        map.setType(objectMap.get("type").toString());
 
                         mapInfo.add(map);
                     } catch (NullPointerException e) {
@@ -85,7 +116,16 @@ public class MapActivity extends AppCompatActivity
                     MarkerOptions makerOptions = new MarkerOptions();
                     makerOptions.position(new LatLng(Double.valueOf(mapInfo.get(idx).getLocation1()), Double.valueOf(mapInfo.get(idx).getLocation2())))
                             .title(mapInfo.get(idx).getName());
-
+                    if(mapInfo.get(idx).getType().equals("학교"))
+                        makerOptions.icon(BitmapDescriptorFactory.fromBitmap(schoolmarker));
+                    else if(mapInfo.get(idx).getType().equals("여행지"))
+                        makerOptions.icon(BitmapDescriptorFactory.fromBitmap(tripamrker));
+                    else if(mapInfo.get(idx).getType().equals("절"))
+                        makerOptions.icon(BitmapDescriptorFactory.fromBitmap(tripamrker02));
+                    else if(mapInfo.get(idx).getType().equals("카페"))
+                        makerOptions.icon(BitmapDescriptorFactory.fromBitmap(cafemarker));
+                    else
+                        makerOptions.icon(BitmapDescriptorFactory.fromBitmap(warningmarker));
                     mMap.addMarker(makerOptions);
                 }
             }
@@ -116,6 +156,22 @@ public class MapActivity extends AppCompatActivity
     public void startsearchAreaPost(){
         MFF = new MapFeedFragment();
         getSupportFragmentManager().beginTransaction().replace(R.id.container02, MFF).commit();
+    }
+
+    private Bitmap createDrawableFromView(ValueEventListener context, View view) {
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        view.measure(displayMetrics.widthPixels, displayMetrics.heightPixels);
+        view.layout(0, 0, displayMetrics.widthPixels, displayMetrics.heightPixels);
+        view.buildDrawingCache();
+        Bitmap bitmap = Bitmap.createBitmap(view.getMeasuredWidth(), view.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
+
+        Canvas canvas = new Canvas(bitmap);
+        view.draw(canvas);
+
+        return bitmap;
     }
 
 
