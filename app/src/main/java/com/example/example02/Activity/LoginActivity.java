@@ -86,9 +86,9 @@ public class LoginActivity extends BasisActivity {
                     break;
                 case R.id.googlelogin:
                     Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-                    Toast.makeText(getApplicationContext(),"This Version can't LogIn GoogleAuth Use In Real Device!",Toast.LENGTH_SHORT).show();
-                    finish();
-                    startActivityForResult(signInIntent, RC_SIGN_IN);
+                    Toast.makeText(getApplicationContext(),"This Version Can't LogIn GoogleAuth.If Using in Real Device It will LogIn Automatically",Toast.LENGTH_SHORT).show();
+//                    finish();
+//                    startActivityForResult(signInIntent, RC_SIGN_IN);
 
             }
         }
