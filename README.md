@@ -1,8 +1,9 @@
 # LandmarkProject
 
 
-In this Project We make SNS based on Current Location.
-This Project was made for 2019 Mobile Programmingn Project 
+In this Project We make SNS(like Instagram)Application<br>
+LandMarker(which is our project name) recommend and inform Landmarker(famous location) based on Current Location.<br/>
+This Project was made for 2019 Mobile Programming Project 
 
 
 
