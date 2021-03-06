@@ -1,4 +1,9 @@
-# LandmarkProject-1
+# LandmarkProject
+
+
+In this Project We make SNS based on Current Location.
+This Project was made for 2019 Mobile Programmingn Project 
+
 
 
 #### Login
